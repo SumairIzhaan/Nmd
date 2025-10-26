@@ -76,14 +76,75 @@
                 if (matches) {
                   number = parseInt(matches[0]);
                 } else {
-                  // Try word to number conversion
+                  // Try word to number conversion (1-300)
                   const wordToNum = {
                     'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
                     'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
                     'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
                     'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'twenty five': 25, 'thirty': 30, 'thirty five': 35, 'forty': 40, 'forty five': 45,
-                    'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90, 'hundred': 100
+                    'twenty one': 21, 'twenty two': 22, 'twenty three': 23, 'twenty four': 24, 'twenty five': 25,
+                    'twenty six': 26, 'twenty seven': 27, 'twenty eight': 28, 'twenty nine': 29, 'thirty': 30,
+                    'thirty one': 31, 'thirty two': 32, 'thirty three': 33, 'thirty four': 34, 'thirty five': 35,
+                    'thirty six': 36, 'thirty seven': 37, 'thirty eight': 38, 'thirty nine': 39, 'forty': 40,
+                    'forty one': 41, 'forty two': 42, 'forty three': 43, 'forty four': 44, 'forty five': 45,
+                    'forty six': 46, 'forty seven': 47, 'forty eight': 48, 'forty nine': 49, 'fifty': 50,
+                    'fifty one': 51, 'fifty two': 52, 'fifty three': 53, 'fifty four': 54, 'fifty five': 55,
+                    'fifty six': 56, 'fifty seven': 57, 'fifty eight': 58, 'fifty nine': 59, 'sixty': 60,
+                    'sixty one': 61, 'sixty two': 62, 'sixty three': 63, 'sixty four': 64, 'sixty five': 65,
+                    'sixty six': 66, 'sixty seven': 67, 'sixty eight': 68, 'sixty nine': 69, 'seventy': 70,
+                    'seventy one': 71, 'seventy two': 72, 'seventy three': 73, 'seventy four': 74, 'seventy five': 75,
+                    'seventy six': 76, 'seventy seven': 77, 'seventy eight': 78, 'seventy nine': 79, 'eighty': 80,
+                    'eighty one': 81, 'eighty two': 82, 'eighty three': 83, 'eighty four': 84, 'eighty five': 85,
+                    'eighty six': 86, 'eighty seven': 87, 'eighty eight': 88, 'eighty nine': 89, 'ninety': 90,
+                    'ninety one': 91, 'ninety two': 92, 'ninety three': 93, 'ninety four': 94, 'ninety five': 95,
+                    'ninety six': 96, 'ninety seven': 97, 'ninety eight': 98, 'ninety nine': 99, 'hundred': 100,
+                    'one hundred': 100, 'hundred one': 101, 'hundred two': 102, 'hundred three': 103, 'hundred four': 104,
+                    'hundred five': 105, 'hundred six': 106, 'hundred seven': 107, 'hundred eight': 108, 'hundred nine': 109,
+                    'hundred ten': 110, 'hundred eleven': 111, 'hundred twelve': 112, 'hundred thirteen': 113, 'hundred fourteen': 114,
+                    'hundred fifteen': 115, 'hundred sixteen': 116, 'hundred seventeen': 117, 'hundred eighteen': 118, 'hundred nineteen': 119,
+                    'hundred twenty': 120, 'hundred twenty one': 121, 'hundred twenty two': 122, 'hundred twenty three': 123, 'hundred twenty four': 124,
+                    'hundred twenty five': 125, 'hundred twenty six': 126, 'hundred twenty seven': 127, 'hundred twenty eight': 128, 'hundred twenty nine': 129,
+                    'hundred thirty': 130, 'hundred thirty five': 135, 'hundred forty': 140, 'hundred forty five': 145, 'hundred fifty': 150,
+                    'hundred fifty five': 155, 'hundred sixty': 160, 'hundred sixty five': 165, 'hundred seventy': 170, 'hundred seventy five': 175,
+                    'hundred eighty': 180, 'hundred eighty five': 185, 'hundred ninety': 190, 'hundred ninety five': 195, 'two hundred': 200,
+                    'two hundred five': 205, 'two hundred ten': 210, 'two hundred fifteen': 215, 'two hundred twenty': 220, 'two hundred twenty five': 225,
+                    'two hundred thirty': 230, 'two hundred thirty five': 235, 'two hundred forty': 240, 'two hundred forty five': 245,
+                    'two hundred fifty': 250, 'two hundred fifty five': 255, 'two hundred sixty': 260, 'two hundred sixty five': 265,
+                    'two hundred seventy': 270, 'two hundred seventy five': 275, 'two hundred eighty': 280, 'two hundred eighty five': 285,
+                    'two hundred ninety': 290, 'two hundred ninety five': 295, 'three hundred': 300,
+                    // Hindi/Hinglish numbers (0-300)
+                    'shunya': 0, 'zero': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
+                    'cheh': 6, 'chhah': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
+                    'gyarah': 11, 'barah': 12, 'terah': 13, 'chaudah': 14, 'pandrah': 15,
+                    'solah': 16, 'satrah': 17, 'atharah': 18, 'unnis': 19, 'bees': 20, 'bis': 20,
+                    'ikkis': 21, 'bais': 22, 'teis': 23, 'chaubis': 24, 'pachchis': 25, 'pachis': 25,
+                    'chhabbis': 26, 'sattais': 27, 'atthais': 28, 'unatis': 29, 'tees': 30, 'tis': 30,
+                    'ikattis': 31, 'battis': 32, 'taintis': 33, 'chautis': 34, 'paintis': 35, 'paithalees': 35,
+                    'chhattis': 36, 'saintis': 37, 'adhtis': 38, 'untalis': 39, 'chalis': 40, 'chaalees': 40,
+                    'iktalis': 41, 'bayalis': 42, 'taintalis': 43, 'chavalis': 44, 'paintalis': 45, 'paitalis': 45,
+                    'chhiyalis': 46, 'saintalis': 47, 'adhtalis': 48, 'unchास': 49, 'pachas': 50, 'pachास': 50,
+                    'ikyavan': 51, 'bavan': 52, 'tirpan': 53, 'chauvan': 54, 'pachpan': 55, 'pachhpan': 55,
+                    'chhappan': 56, 'sattavan': 57, 'atthavan': 58, 'unsath': 59, 'saath': 60, 'sath': 60,
+                    'iksath': 61, 'basath': 62, 'tirsath': 63, 'chausath': 64, 'painsath': 65, 'paisath': 65,
+                    'chhiyasath': 66, 'sarsath': 67, 'adhasath': 68, 'unhattar': 69, 'sattar': 70, 'satar': 70,
+                    'ikhattar': 71, 'bahattar': 72, 'tihattar': 73, 'chauhattar': 74, 'pachhattar': 75, 'pachattar': 75,
+                    'chhihattar': 76, 'sathattar': 77, 'athhattar': 78, 'unasi': 79, 'assi': 80, 'ashi': 80,
+                    'ikyasi': 81, 'bayasi': 82, 'tirasi': 83, 'chaurasi': 84, 'pachasi': 85, 'pachhasi': 85,
+                    'chhiyasi': 86, 'satasi': 87, 'athasi': 88, 'navasi': 89, 'nabbe': 90, 'navve': 90,
+                    'ikyanve': 91, 'banve': 92, 'tirانve': 93, 'chauanve': 94, 'pachanve': 95, 'pachانve': 95,
+                    'chhiانve': 96, 'satانve': 97, 'athانve': 98, 'ninyanve': 99, 'sau': 100, 'so': 100,
+                    'ek sau': 100, 'sau ek': 101, 'sau do': 102, 'sau teen': 103, 'sau char': 104, 'sau paanch': 105,
+                    'sau cheh': 106, 'sau saat': 107, 'sau aath': 108, 'sau nau': 109, 'sau das': 110,
+                    'sau gyarah': 111, 'sau barah': 112, 'sau pandrah': 115, 'sau bees': 120, 'sau bis': 120,
+                    'sau pachchis': 125, 'sau pachis': 125, 'sau tees': 130, 'sau tis': 130, 'sau paintis': 135,
+                    'sau chalis': 140, 'sau paintalis': 145, 'sau pachas': 150, 'sau pachpan': 155, 'sau saath': 160,
+                    'sau paisath': 165, 'sau sattar': 170, 'sau pachattar': 175, 'sau assi': 180, 'sau pachasi': 185,
+                    'sau nabbe': 190, 'sau pachanve': 195, 'do sau': 200, 'do so': 200,
+                    'do sau paanch': 205, 'do sau das': 210, 'do sau pandrah': 215, 'do sau bees': 220, 'do sau pachchis': 225,
+                    'do sau tees': 230, 'do sau paintis': 235, 'do sau chalis': 240, 'do sau paintalis': 245,
+                    'do sau pachas': 250, 'do sau pachpan': 255, 'do sau saath': 260, 'do sau paisath': 265,
+                    'do sau sattar': 270, 'do sau pachattar': 275, 'do sau assi': 280, 'do sau pachasi': 285,
+                    'do sau nabbe': 290, 'do sau pachanve': 295, 'teen sau': 300, 'teen so': 300
                   };
                   
                   const lowerText = spokenText.toLowerCase();
@@ -221,7 +282,7 @@
             });
             
             text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}(${totalPieces}÷6)`;
+            text += `\tTotal Crates  =\t${totalCrates}`;
             
             return text;
           };
@@ -279,7 +340,8 @@
                     <option value="hi-IN">हिंदी (Hindi)</option>
                   </select>
                   <p className="text-xs text-gray-600 mt-2">
-                    Speak numbers clearly. Works best with digits: "20", "15", "0"
+                    English: "twenty", "fifty", "hundred twenty five"<br/>
+                    Hinglish: "bees", "pachas", "sau pachchis"
                   </p>
                 </div>
 
