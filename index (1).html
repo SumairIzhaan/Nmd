@@ -1,0 +1,415 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NMD Orders - Voice Order Entry System</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const VoiceOrderEntry = () => {
+          const [clients, setClients] = useState([
+            'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
+            'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
+            'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
+            'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
+            'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
+            'Patel saab', 'Nova'
+          ]);
+          const [newClientName, setNewClientName] = useState('');
+          const [showAddClient, setShowAddClient] = useState(false);
+          const [language, setLanguage] = useState('en-IN');
+
+          const [orders, setOrders] = useState(() => {
+            const saved = {};
+            clients.forEach(client => saved[client] = 0);
+            return saved;
+          });
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [isListening, setIsListening] = useState(false);
+          const [editMode, setEditMode] = useState(false);
+          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+          }));
+          const [transcript, setTranscript] = useState('');
+          const recognitionRef = useRef(null);
+          const isListeningRef = useRef(false);
+          const currentIndexRef = useRef(0);
+
+          useEffect(() => {
+            currentIndexRef.current = currentIndex;
+          }, [currentIndex]);
+
+          useEffect(() => {
+            isListeningRef.current = isListening;
+          }, [isListening]);
+
+          useEffect(() => {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+              const recog = new SpeechRecognition();
+              recog.continuous = false;
+              recog.interimResults = false;
+              recog.lang = language;
+
+              recog.onresult = (event) => {
+                const spokenText = event.results[0][0].transcript;
+                setTranscript(spokenText);
+                console.log('Heard:', spokenText);
+                
+                // Extract number from spoken text
+                let number = 0;
+                
+                // Hindi number words
+                const hindiNumbers = {
+                  'शून्य': 0, 'एक': 1, 'दो': 2, 'तीन': 3, 'चार': 4, 'पांच': 5, 'पाँच': 5,
+                  'छह': 6, 'सात': 7, 'आठ': 8, 'नौ': 9, 'दस': 10,
+                  'ग्यारह': 11, 'बारह': 12, 'तेरह': 13, 'चौदह': 14, 'पंद्रह': 15,
+                  'सोलह': 16, 'सत्रह': 17, 'अठारह': 18, 'उन्नीस': 19, 'बीस': 20,
+                  'पच्चीस': 25, 'तीस': 30, 'पैंतीस': 35, 'चालीस': 40, 'पैंतालीस': 45,
+                  'पचास': 50, 'साठ': 60, 'सत्तर': 70, 'अस्सी': 80, 'नब्बे': 90, 'सौ': 100
+                };
+
+                // Try to match Hindi words first
+                const lowerText = spokenText.toLowerCase();
+                let foundHindi = false;
+                for (const [word, num] of Object.entries(hindiNumbers)) {
+                  if (lowerText.includes(word)) {
+                    number = num;
+                    foundHindi = true;
+                    break;
+                  }
+                }
+
+                // If no Hindi match, try to extract English number
+                if (!foundHindi) {
+                  const matches = spokenText.match(/\d+/);
+                  if (matches) {
+                    number = parseInt(matches[0]);
+                  }
+                }
+
+                console.log('Parsed number:', number);
+                
+                if (!isNaN(number)) {
+                  const idx = currentIndexRef.current;
+                  const client = clients[idx];
+                  console.log('Setting order for', client, '=', number);
+                  
+                  setOrders(prev => {
+                    const newOrders = { ...prev, [client]: number };
+                    console.log('New orders:', newOrders);
+                    return newOrders;
+                  });
+                  
+                  // Move to next client
+                  if (idx < clients.length - 1) {
+                    setTimeout(() => {
+                      setCurrentIndex(idx + 1);
+                      if (isListeningRef.current) {
+                        try {
+                          recog.start();
+                        } catch (e) {
+                          console.log('Recognition restart:', e);
+                        }
+                      }
+                    }, 800);
+                  } else {
+                    setIsListening(false);
+                    alert('All orders completed!');
+                  }
+                }
+              };
+
+              recog.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'no-speech') {
+                  setTranscript('No speech detected. Please speak again.');
+                  if (isListeningRef.current && currentIndexRef.current < clients.length) {
+                    setTimeout(() => {
+                      try {
+                        recog.start();
+                      } catch (e) {
+                        console.log('Restart after no-speech:', e);
+                      }
+                    }, 1000);
+                  }
+                } else if (event.error === 'aborted') {
+                  // Ignore aborted errors during transitions
+                  console.log('Recognition aborted (normal during transitions)');
+                }
+              };
+
+              recog.onend = () => {
+                console.log('Recognition ended');
+                // Don't auto-restart here as we handle it in onresult
+              };
+
+              recognitionRef.current = recog;
+            }
+          }, [clients, language]);
+
+          const startVoiceEntry = () => {
+            if (recognitionRef.current) {
+              setIsListening(true);
+              setCurrentIndex(0);
+              setTranscript('');
+              try {
+                recognitionRef.current.start();
+              } catch (e) {
+                console.log('Start error:', e);
+              }
+            } else {
+              alert('Speech recognition is not supported in your browser. Please use Chrome.');
+            }
+          };
+
+          const stopVoiceEntry = () => {
+            setIsListening(false);
+            if (recognitionRef.current) {
+              try {
+                recognitionRef.current.stop();
+              } catch (e) {
+                console.log('Stop error:', e);
+              }
+            }
+          };
+
+          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
+          const totalCrates = (totalPieces / 6).toFixed(2);
+
+          const formatForWhatsApp = () => {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            });
+            
+            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
+            
+            clients.forEach(client => {
+              const order = orders[client];
+              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
+              text += `\t${client}.${spacing}=\t${order}\t\n`;
+            });
+            
+            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
+            text += `\tTotal Crates  =\t${totalCrates}(${totalPieces}÷6)`;
+            
+            return text;
+          };
+
+          const copyToClipboard = () => {
+            navigator.clipboard.writeText(formatForWhatsApp());
+            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
+          };
+
+          const resetOrders = () => {
+            const reset = {};
+            clients.forEach(client => reset[client] = 0);
+            setOrders(reset);
+            setCurrentIndex(0);
+            setTranscript('');
+          };
+
+          const addNewClient = () => {
+            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
+              setClients(prev => [...prev, newClientName.trim()]);
+              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
+              setNewClientName('');
+              setShowAddClient(false);
+            }
+          };
+
+          const removeClient = (clientName) => {
+            if (confirm(`Remove ${clientName} from the list?`)) {
+              setClients(prev => prev.filter(c => c !== clientName));
+              setOrders(prev => {
+                const newOrders = { ...prev };
+                delete newOrders[clientName];
+                return newOrders;
+              });
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+              <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
+                <h1 className="text-3xl font-bold text-center mb-6 text-indigo-600">
+                  📦 NMD Orders
+                </h1>
+
+                <div className="mb-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
+                  <label className="block text-sm font-semibold mb-2">Voice Language:</label>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="w-full p-2 border-2 border-gray-300 rounded-lg"
+                    disabled={isListening}
+                  >
+                    <option value="en-IN">English (India)</option>
+                    <option value="hi-IN">हिंदी (Hindi)</option>
+                  </select>
+                  <p className="text-xs text-gray-600 mt-2">
+                    {language === 'hi-IN' 
+                      ? 'अब आप हिंदी में संख्या बोल सकते हैं (एक, दो, तीन...)' 
+                      : 'Speak numbers in English (one, two, three...)'}
+                  </p>
+                </div>
+
+                <div className="mb-6 flex gap-4 justify-center flex-wrap">
+                  {!isListening ? (
+                    <button
+                      onClick={startVoiceEntry}
+                      className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                    >
+                      ▶ Start Voice Entry
+                    </button>
+                  ) : (
+                    <button
+                      onClick={stopVoiceEntry}
+                      className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                    >
+                      ◼ Stop
+                    </button>
+                  )}
+                  
+                  <button
+                    onClick={() => setEditMode(!editMode)}
+                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                  >
+                    ✏️ {editMode ? 'Done Editing' : 'Edit Orders'}
+                  </button>
+                  
+                  <button
+                    onClick={copyToClipboard}
+                    className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                  >
+                    📋 Copy for WhatsApp
+                  </button>
+                  
+                  <button
+                    onClick={resetOrders}
+                    className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                  >
+                    ✕ Reset All
+                  </button>
+
+                  <button
+                    onClick={() => setShowAddClient(!showAddClient)}
+                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+                  >
+                    {showAddClient ? '✕ Cancel' : '+ Add Client'}
+                  </button>
+                </div>
+
+                {showAddClient && (
+                  <div className="mb-6 p-4 bg-orange-50 border-2 border-orange-300 rounded-lg">
+                    <label className="block text-sm font-semibold mb-2">New Client Name:</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newClientName}
+                        onChange={(e) => setNewClientName(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
+                        placeholder="Enter client name"
+                        className="flex-1 p-2 border-2 border-gray-300 rounded-lg"
+                      />
+                      <button
+                        onClick={addNewClient}
+                        className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {isListening && (
+                  <div className="mb-6 p-4 bg-green-100 border-2 border-green-500 rounded-lg text-center">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <span className="text-2xl animate-pulse">🎤</span>
+                      <span className="text-lg font-semibold">Listening for: {clients[currentIndex]}</span>
+                    </div>
+                    <div className="text-sm text-gray-600 mb-2">
+                      {language === 'hi-IN' ? 'संख्या बोलें...' : 'Say the quantity number...'}
+                    </div>
+                    {transcript && (
+                      <div className="text-sm bg-white p-2 rounded mt-2">
+                        Heard: <strong>{transcript}</strong>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold mb-2">Date:</label>
+                  <input
+                    type="text"
+                    value={currentDate}
+                    onChange={(e) => setCurrentDate(e.target.value)}
+                    className="w-full p-2 border-2 border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-h-96 overflow-y-auto p-2">
+                  {clients.map((client, idx) => (
+                    <div
+                      key={client}
+                      className={`p-3 rounded-lg border-2 transition relative ${
+                        idx === currentIndex && isListening
+                          ? 'border-green-500 bg-green-50'
+                          : 'border-gray-300 bg-gray-50'
+                      }`}
+                    >
+                      <button
+                        onClick={() => removeClient(client)}
+                        className="absolute top-1 right-1 text-red-500 hover:text-red-700 text-xs"
+                        title="Remove client"
+                      >
+                        ✕
+                      </button>
+                      <div className="font-semibold text-gray-700 mb-1">{client}</div>
+                      {editMode ? (
+                        <input
+                          type="number"
+                          value={orders[client]}
+                          onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
+                          className="w-full p-2 border border-gray-300 rounded"
+                        />
+                      ) : (
+                        <div className="text-2xl font-bold text-indigo-600">{orders[client]}</div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-indigo-50 p-4 rounded-lg">
+                  <div className="text-xl font-bold text-gray-800 mb-2">
+                    Total Pieces: <span className="text-indigo-600">{totalPieces}</span>
+                  </div>
+                  <div className="text-xl font-bold text-gray-800">
+                    Total Crates: <span className="text-indigo-600">{totalCrates}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
+    </script>
+</body>
+</html>
