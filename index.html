@@ -484,10 +484,62 @@
           );
         };
 
-        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
+        ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
+</body>
+</html><VoiceOrderEntry />, document.getElementById('root'));
     </script>
 </body>
-</html>          const [isListening, setIsListening] = useState(false);
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NMD Orders - Voice Order Entry System</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        #root {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const VoiceOrderEntry = () => {
+          const [clients, setClients] = useState([
+            'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
+            'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
+            'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
+            'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
+            'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
+            'Patel saab', 'Nova'
+          ]);
+          const [newClientName, setNewClientName] = useState('');
+          const [showAddClient, setShowAddClient] = useState(false);
+          const [language, setLanguage] = useState('en-IN');
+
+          const [orders, setOrders] = useState(() => {
+            const saved = {};
+            clients.forEach(client => saved[client] = 0);
+            return saved;
+          });
+          const [currentIndex, setCurrentIndex] = useState(0);
+          const [isListening, setIsListening] = useState(false);
           const [editMode, setEditMode] = useState(false);
           const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
             day: '2-digit',
@@ -707,26 +759,26 @@
           };
 
           return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-              <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-purple-200">
-                <div className="text-center mb-8">
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 pb-8">
+              <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-8 border border-purple-200">
+                <div className="text-center mb-6 md:mb-8">
                   <div className="inline-block p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl mb-3 shadow-lg">
-                    <span className="text-4xl">📦</span>
+                    <span className="text-3xl md:text-4xl">📦</span>
                   </div>
-                  <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                  <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
                     NMD Orders
                   </h1>
-                  <p className="text-gray-500 text-sm">Voice-Powered Order Management</p>
+                  <p className="text-gray-500 text-xs md:text-sm">Voice-Powered Order Management</p>
                 </div>
 
-                <div className="mb-6 p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
-                  <label className="block text-sm font-bold mb-3 text-gray-700 flex items-center gap-2">
+                <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
+                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
                     <span>🌐</span> Voice Language
                   </label>
                   <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full p-3 border-2 border-amber-200 rounded-xl bg-white shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200 transition-all"
+                    className="w-full p-3 border-2 border-amber-200 rounded-xl bg-white shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200 transition-all text-sm md:text-base"
                     disabled={isListening}
                   >
                     <option value="en-IN">🇮🇳 English (India)</option>
@@ -739,69 +791,69 @@
                   </div>
                 </div>
 
-                <div className="mb-6 flex gap-3 justify-center flex-wrap">
+                <div className="mb-4 md:mb-6 flex gap-2 md:gap-3 justify-center flex-wrap">
                   {!isListening ? (
                     <button
                       onClick={startVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                     >
-                      <span className="text-xl">▶️</span> Start Voice Entry
+                      <span className="text-lg md:text-xl">▶️</span> Start Voice Entry
                     </button>
                   ) : (
                     <button
                       onClick={stopVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                      className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                     >
-                      <span className="text-xl">⏹️</span> Stop
+                      <span className="text-lg md:text-xl">⏹️</span> Stop
                     </button>
                   )}
                   
                   <button
                     onClick={() => setEditMode(!editMode)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                   >
-                    <span className="text-xl">✏️</span> {editMode ? 'Done' : 'Edit'}
+                    <span className="text-lg md:text-xl">✏️</span> {editMode ? 'Done' : 'Edit'}
                   </button>
                   
                   <button
                     onClick={copyToClipboard}
-                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                   >
-                    <span className="text-xl">📋</span> Copy
+                    <span className="text-lg md:text-xl">📋</span> Copy
                   </button>
                   
                   <button
                     onClick={resetOrders}
-                    className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                   >
-                    <span className="text-xl">🔄</span> Reset
+                    <span className="text-lg md:text-xl">🔄</span> Reset
                   </button>
 
                   <button
                     onClick={() => setShowAddClient(!showAddClient)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                    className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
                   >
-                    <span className="text-xl">{showAddClient ? '✕' : '➕'}</span> {showAddClient ? 'Cancel' : 'Add Client'}
+                    <span className="text-lg md:text-xl">{showAddClient ? '✕' : '➕'}</span> {showAddClient ? 'Cancel' : 'Add'}
                   </button>
                 </div>
 
                 {showAddClient && (
-                  <div className="mb-6 p-5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
-                    <label className="block text-sm font-bold mb-3 text-gray-700 flex items-center gap-2">
+                  <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
+                    <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
                       <span>👤</span> New Client Name
                     </label>
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 md:gap-3">
                       <input
                         type="text"
                         value={newClientName}
                         onChange={(e) => setNewClientName(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
                         placeholder="Enter client name"
-                        className="flex-1 p-3 border-2 border-orange-200 rounded-xl shadow-sm focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all"
+                        className="flex-1 p-3 border-2 border-orange-200 rounded-xl shadow-sm focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all text-sm md:text-base"
                       />
                       <button
                         onClick={addNewClient}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
                       >
                         Add
                       </button>
@@ -810,23 +862,23 @@
                 )}
 
                 {isListening && (
-                  <div className="mb-6 p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-400 rounded-2xl shadow-xl">
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                      <span className="text-3xl animate-pulse">🎤</span>
-                      <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                  <div className="mb-4 md:mb-6 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-400 rounded-2xl shadow-xl">
+                    <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
+                      <span className="text-2xl md:text-3xl animate-pulse">🎤</span>
+                      <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
                         {clients[currentIndex]}
                       </span>
                     </div>
-                    <div className="text-center mb-4">
-                      <div className="inline-block px-6 py-3 bg-white rounded-2xl shadow-md">
-                        <div className="text-sm text-gray-500 mb-1">Current Order</div>
-                        <div className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                    <div className="text-center mb-3 md:mb-4">
+                      <div className="inline-block px-4 md:px-6 py-2 md:py-3 bg-white rounded-2xl shadow-md">
+                        <div className="text-xs md:text-sm text-gray-500 mb-1">Current Order</div>
+                        <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                           {orders[clients[currentIndex]]}
                         </div>
                       </div>
                     </div>
                     {transcript && (
-                      <div className="text-sm bg-white/80 backdrop-blur p-3 rounded-xl mb-4 text-center shadow-sm border border-gray-200">
+                      <div className="text-xs md:text-sm bg-white/80 backdrop-blur p-2 md:p-3 rounded-xl mb-3 md:mb-4 text-center shadow-sm border border-gray-200">
                         {transcript}
                       </div>
                     )}
@@ -834,19 +886,19 @@
                     <div className="flex gap-2 justify-center flex-wrap">
                       <button
                         onClick={retryCurrentClient}
-                        className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                        className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
                       >
                         🔄 Retry
                       </button>
                       <button
                         onClick={confirmAndNext}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
                       >
-                        ✓ Confirm & Next
+                        ✓ Next
                       </button>
                       <button
                         onClick={skipToNext}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all"
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
                       >
                         ⏭️ Skip
                       </button>
@@ -854,23 +906,23 @@
                   </div>
                 )}
 
-                <div className="mb-6">
-                  <label className="block text-sm font-bold mb-3 text-gray-700 flex items-center gap-2">
+                <div className="mb-4 md:mb-6">
+                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
                     <span>📅</span> Date
                   </label>
                   <input
                     type="text"
                     value={currentDate}
                     onChange={(e) => setCurrentDate(e.target.value)}
-                    className="w-full p-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all bg-white"
+                    className="w-full p-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all bg-white text-sm md:text-base"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-h-96 overflow-y-auto p-2">
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 max-h-96 overflow-y-auto p-1 md:p-2">
                   {clients.map((client, idx) => (
                     <div
                       key={client}
-                      className={`p-4 rounded-2xl border-2 transition-all relative shadow-md hover:shadow-lg ${
+                      className={`p-3 md:p-4 rounded-2xl border-2 transition-all relative shadow-md hover:shadow-lg ${
                         idx === currentIndex && isListening
                           ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 scale-105'
                           : 'border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:border-purple-300'
@@ -878,21 +930,21 @@
                     >
                       <button
                         onClick={() => removeClient(client)}
-                        className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:scale-110 transition-all"
+                        className="absolute top-1 right-1 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:scale-110 transition-all"
                         title="Remove client"
                       >
                         ✕
                       </button>
-                      <div className="font-bold text-gray-700 mb-2 pr-8">{client}</div>
+                      <div className="font-bold text-gray-700 mb-1 md:mb-2 pr-6 md:pr-8 text-xs md:text-base">{client}</div>
                       {editMode ? (
                         <input
                           type="number"
                           value={orders[client]}
                           onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
-                          className="w-full p-2 border-2 border-purple-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all"
+                          className="w-full p-2 border-2 border-purple-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all text-sm md:text-base"
                         />
                       ) : (
-                        <div className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                           {orders[client]}
                         </div>
                       )}
@@ -900,20 +952,20 @@
                   ))}
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-6 rounded-2xl shadow-xl border border-purple-200">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-lg font-bold text-gray-700">📊 Summary</div>
+                <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4 md:p-6 rounded-2xl shadow-xl border border-purple-200">
+                  <div className="flex items-center justify-between mb-2 md:mb-3">
+                    <div className="text-base md:text-lg font-bold text-gray-700">📊 Summary</div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white p-4 rounded-xl shadow-md">
-                      <div className="text-sm text-gray-500 mb-1">Total Pieces</div>
-                      <div className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  <div className="grid grid-cols-2 gap-3 md:gap-4">
+                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
+                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Pieces</div>
+                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                         {totalPieces}
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl shadow-md">
-                      <div className="text-sm text-gray-500 mb-1">Total Crates</div>
-                      <div className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
+                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Crates</div>
+                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                         {totalCrates}
                       </div>
                     </div>
@@ -924,2470 +976,10 @@
           );
         };
 
-        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
-    </script>
+        ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
 </body>
-</html>        }
-
-        .header-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%);
-            backdrop-filter: blur(20px);
-            border-radius: 28px;
-            padding: 32px 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .app-title {
-            font-size: 42px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            letter-spacing: -1px;
-        }
-
-        .app-subtitle {
-            font-size: 15px;
-            color: #666;
-            font-weight: 500;
-        }
-
-        .card {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-emoji {
-            font-size: 24px;
-        }
-
-        .language-select {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            background: white;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .language-select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
-        }
-
-        .hint-text {
-            margin-top: 12px;
-            padding: 12px;
-            background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
-            border-radius: 12px;
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .date-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .date-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
-        }
-
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            padding: 18px 24px;
-            border: none;
-            border-radius: 18px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: white;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.2);
-            transition: left 0.5s;
-        }
-
-        .btn:active::before {
-            left: 100%;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-        }
-
-        .btn-stop {
-            background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
-        }
-
-        .btn-edit {
-            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
-        }
-
-        .btn-copy {
-            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
-        }
-
-        .btn-reset {
-            background: linear-gradient(135deg, #94A3B8 0%, #64748B 100%);
-        }
-
-        .btn-add {
-            background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
-            grid-column: span 2;
-        }
-
-        .add-client-form {
-            margin-top: 16px;
-            padding: 20px;
-            background: linear-gradient(135deg, #fff5e6 0%, #ffe5cc 100%);
-            border-radius: 20px;
-            border: 2px solid #ffb74d;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .client-input {
-            flex: 1;
-            padding: 16px;
-            border: 2px solid #ffb74d;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .client-input:focus {
-            outline: none;
-            border-color: #f97316;
-            box-shadow: 0 0 0 4px rgba(251,146,60,0.1);
-        }
-
-        .listening-card {
-            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-            border-radius: 24px;
-            padding: 32px 24px;
-            text-align: center;
-            border: 3px solid #34D399;
-            box-shadow: 0 20px 60px rgba(52,211,153,0.3);
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 20px 60px rgba(52,211,153,0.3); }
-            50% { box-shadow: 0 20px 80px rgba(52,211,153,0.5); }
-        }
-
-        .mic-icon {
-            font-size: 64px;
-            animation: pulse 1.5s ease-in-out infinite;
-            margin-bottom: 16px;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.15); opacity: 0.8; }
-        }
-
-        .current-client-name {
-            font-size: 28px;
-            font-weight: 900;
-            color: #065F46;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .order-display {
-            font-size: 56px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 24px 0;
-        }
-
-        .transcript-box {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            margin: 24px 0;
-            font-size: 15px;
-            color: #666;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .listening-controls {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 24px;
-        }
-
-        .listening-controls .btn {
-            min-width: 120px;
-            padding: 16px 24px;
-        }
-
-        .orders-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            max-height: 480px;
-            overflow-y: auto;
-            padding: 4px;
-            margin-bottom: 20px;
-        }
-
-        .orders-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .orders-grid::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-            border-radius: 10px;
-        }
-
-        .orders-grid::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-        }
-
-        .order-item {
-            background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 20px;
-            padding: 20px 16px;
-            position: relative;
-            transition: all 0.3s;
-        }
-
-        .order-item:active {
-            transform: scale(0.97);
-        }
-
-        .order-item.active {
-            border-color: #34D399;
-            background: linear-gradient(135deg, #D1FAE5 0%, #ffffff 100%);
-            box-shadow: 0 12px 40px rgba(52,211,153,0.3);
-            transform: scale(1.02);
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #FEE2E2;
-            border: none;
-            color: #EF4444;
-            font-size: 20px;
-            font-weight: 900;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.3s;
-        }
-
-        .remove-btn:active {
-            transform: scale(0.9);
-            background: #FCA5A5;
-        }
-
-        .client-label {
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 12px;
-            font-size: 15px;
-            padding-right: 32px;
-        }
-
-        .order-number {
-            font-size: 40px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .order-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 14px;
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .order-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
-        }
-
-        .totals-card {
-            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-            border-radius: 24px;
-            padding: 32px 24px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            border: 2px solid rgba(102,126,234,0.2);
-        }
-
-        .total-box {
-            text-align: center;
-        }
-
-        .total-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #4338ca;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .total-value {
-            font-size: 48px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1;
-        }
-
-        @media (max-width: 400px) {
-            .app-title {
-                font-size: 36px;
-            }
-
-            .btn {
-                padding: 16px 20px;
-                font-size: 15px;
-            }
-
-            .order-display {
-                font-size: 48px;
-            }
-
-            .total-value {
-                font-size: 40px;
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            animation: fadeInUp 0.6s ease backwards;
-        }
-
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
-        .card:nth-child(4) { animation-delay: 0.4s; }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        const VoiceOrderEntry = () => {
-          const [clients, setClients] = useState([
-            'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
-            'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
-            'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
-            'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
-            'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
-            'Patel saab', 'Nova'
-          ]);
-          const [newClientName, setNewClientName] = useState('');
-          const [showAddClient, setShowAddClient] = useState(false);
-          const [language, setLanguage] = useState('en-IN');
-
-          const [orders, setOrders] = useState(() => {
-            const saved = {};
-            clients.forEach(client => saved[client] = 0);
-            return saved;
-          });
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [isListening, setIsListening] = useState(false);
-          const [editMode, setEditMode] = useState(false);
-          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }));
-          const [transcript, setTranscript] = useState('');
-          const recognitionRef = useRef(null);
-          const isListeningRef = useRef(false);
-          const currentIndexRef = useRef(0);
-
-          useEffect(() => {
-            currentIndexRef.current = currentIndex;
-          }, [currentIndex]);
-
-          useEffect(() => {
-            isListeningRef.current = isListening;
-          }, [isListening]);
-
-          useEffect(() => {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
-              const recog = new SpeechRecognition();
-              recog.continuous = false;
-              recog.interimResults = false;
-              recog.lang = language;
-
-              recog.onresult = (event) => {
-                const spokenText = event.results[0][0].transcript;
-                setTranscript(spokenText);
-                
-                const matches = spokenText.match(/\d+/);
-                let number = 0;
-                
-                if (matches) {
-                  number = parseInt(matches[0]);
-                } else {
-                  const wordToNum = {
-                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
-                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'twenty one': 21, 'twenty two': 22, 'twenty three': 23, 'twenty four': 24, 'twenty five': 25,
-                    'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70,
-                    'eighty': 80, 'ninety': 90, 'hundred': 100, 'one hundred': 100,
-                    'two hundred': 200, 'three hundred': 300,
-                    'shunya': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
-                    'cheh': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
-                    'bees': 20, 'bis': 20, 'tees': 30, 'chalis': 40, 'pachas': 50,
-                    'saath': 60, 'sattar': 70, 'assi': 80, 'nabbe': 90,
-                    'sau': 100, 'do sau': 200, 'teen sau': 300
-                  };
-                  
-                  const lowerText = spokenText.toLowerCase();
-                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
-                    }
-                  }
-                }
-                
-                const idx = currentIndexRef.current;
-                const client = clients[idx];
-                
-                setOrders(prev => ({ ...prev, [client]: number }));
-              };
-
-              recog.onerror = (event) => {
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                }
-              };
-
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              console.log('Start error:', e);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {}
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied! Paste in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName}?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="app-container">
-              <div className="header-card">
-                <div className="app-title">📦 NMD Orders</div>
-                <div className="app-subtitle">Voice-Powered Order System</div>
-              </div>
-
-              <div className="card">
-                <div className="section-title">
-                  <span className="section-emoji">🌐</span>
-                  Voice Language
-                </div>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="language-select"
-                  disabled={isListening}
-                >
-                  <option value="en-IN">🇮🇳 English (India)</option>
-                  <option value="hi-IN">🇮🇳 हिंदी (Hindi)</option>
-                </select>
-                <div className="hint-text">
-                  <strong>💡 Examples:</strong><br/>
-                  English: "twenty", "fifty", "hundred"<br/>
-                  Hindi: "bees", "pachas", "sau"
-                </div>
-              </div>
-
-              <div className="card">
-                <div className="section-title">
-                  <span className="section-emoji">📅</span>
-                  Date
-                </div>
-                <input
-                  type="text"
-                  value={currentDate}
-                  onChange={(e) => setCurrentDate(e.target.value)}
-                  className="date-input"
-                />
-              </div>
-
-              <div className="card">
-                <div className="button-grid">
-                  {!isListening ? (
-                    <button onClick={startVoiceEntry} className="btn btn-start">
-                      ▶ Start
-                    </button>
-                  ) : (
-                    <button onClick={stopVoiceEntry} className="btn btn-stop">
-                      ◼ Stop
-                    </button>
-                  )}
-                  
-                  <button onClick={() => setEditMode(!editMode)} className="btn btn-edit">
-                    {editMode ? '✓ Done' : '✏️ Edit'}
-                  </button>
-                  
-                  <button onClick={copyToClipboard} className="btn btn-copy">
-                    📋 Copy
-                  </button>
-                  
-                  <button onClick={resetOrders} className="btn btn-reset">
-                    ↻ Reset
-                  </button>
-
-                  <button onClick={() => setShowAddClient(!showAddClient)} className="btn btn-add">
-                    {showAddClient ? '✕ Cancel' : '+ Add Client'}
-                  </button>
-                </div>
-
-                {showAddClient && (
-                  <div className="add-client-form">
-                    <div className="section-title">
-                      <span className="section-emoji">👤</span>
-                      New Client
-                    </div>
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        value={newClientName}
-                        onChange={(e) => setNewClientName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                        placeholder="Client name..."
-                        className="client-input"
-                      />
-                      <button onClick={addNewClient} className="btn btn-start" style={{minWidth: '80px'}}>
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {isListening && (
-                <div className="card">
-                  <div className="listening-card">
-                    <div className="mic-icon">🎤</div>
-                    <div className="current-client-name">
-                      {clients[currentIndex]}
-                    </div>
-                    <div className="order-display">
-                      {orders[clients[currentIndex]]}
-                    </div>
-                    {transcript && (
-                      <div className="transcript-box">{transcript}</div>
-                    )}
-                    
-                    <div className="listening-controls">
-                      <button onClick={retryCurrentClient} className="btn btn-add">
-                        🔄 Retry
-                      </button>
-                      <button onClick={confirmAndNext} className="btn btn-start">
-                        ✓ Next
-                      </button>
-                      <button onClick={skipToNext} className="btn btn-edit">
-                        ⏭️ Skip
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="card">
-                <div className="section-title">
-                  <span className="section-emoji">📋</span>
-                  Client Orders
-                </div>
-                <div className="orders-grid">
-                  {clients.map((client, idx) => (
-                    <div        }
-
-        .header h1 {
-            font-size: 36px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .language-selector {
-            background: #f8f9fa;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .language-selector label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-        .language-selector select {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 15px;
-            background: white;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .language-selector select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .language-selector .hint {
-            margin-top: 12px;
-            font-size: 12px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .action-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            padding: 16px 24px;
-            border: none;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-        }
-
-        .btn-stop {
-            background: linear-gradient(135deg, #F87171 0%, #EF4444 100%);
-        }
-
-        .btn-edit {
-            background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
-        }
-
-        .btn-copy {
-            background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
-        }
-
-        .btn-reset {
-            background: linear-gradient(135deg, #94A3B8 0%, #64748B 100%);
-        }
-
-        .btn-add {
-            background: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
-        }
-
-        .add-client-form {
-            background: #fff3e0;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 2px solid #ffb74d;
-        }
-
-        .add-client-form label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-        .add-client-form .input-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        .add-client-form input {
-            flex: 1;
-            padding: 14px 16px;
-            border: 2px solid #ffb74d;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-
-        .add-client-form input:focus {
-            outline: none;
-            border-color: #f97316;
-        }
-
-        .listening-card {
-            background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 2px solid #34D399;
-        }
-
-        .listening-card .current-client {
-            font-size: 24px;
-            font-weight: 700;
-            color: #065F46;
-            margin-bottom: 16px;
-        }
-
-        .listening-card .mic-icon {
-            font-size: 48px;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
-        }
-
-        .listening-card .order-value {
-            font-size: 42px;
-            font-weight: 700;
-            color: #059669;
-            margin: 20px 0;
-        }
-
-        .listening-card .transcript {
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin: 20px 0;
-            font-size: 14px;
-            color: #666;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .listening-card .controls {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .listening-card .btn {
-            min-width: 120px;
-        }
-
-        .date-input {
-            background: #f8f9fa;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .date-input label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-        }
-
-        .date-input input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-
-        .date-input input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .orders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 30px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding: 4px;
-        }
-
-        .orders-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .orders-grid::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .orders-grid::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
-        }
-
-        .order-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 14px;
-            padding: 20px;
-            position: relative;
-            transition: all 0.2s;
-        }
-
-        .order-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-        }
-
-        .order-card.active {
-            border-color: #34D399;
-            background: linear-gradient(135deg, #D1FAE5 0%, #ffffff 100%);
-            box-shadow: 0 8px 20px rgba(52, 211, 153, 0.25);
-        }
-
-        .order-card .remove-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: none;
-            border: none;
-            color: #EF4444;
-            font-size: 18px;
-            cursor: pointer;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .order-card .remove-btn:hover {
-            background: #FEE2E2;
-        }
-
-        .order-card .client-name {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 12px;
-            font-size: 15px;
-            padding-right: 24px;
-        }
-
-        .order-card .order-value {
-            font-size: 32px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .order-card input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            text-align: center;
-            transition: all 0.2s;
-        }
-
-        .order-card input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .totals {
-            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
-            border-radius: 16px;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .total-item {
-            text-align: center;
-        }
-
-        .total-item .label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #4338ca;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .total-item .value {
-            font-size: 48px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 24px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .action-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .orders-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 12px;
-            }
-
-            .total-item .value {
-                font-size: 36px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        const VoiceOrderEntry = () => {
-          const [clients, setClients] = useState([
-            'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
-            'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
-            'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
-            'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
-            'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
-            'Patel saab', 'Nova'
-          ]);
-          const [newClientName, setNewClientName] = useState('');
-          const [showAddClient, setShowAddClient] = useState(false);
-          const [language, setLanguage] = useState('en-IN');
-
-          const [orders, setOrders] = useState(() => {
-            const saved = {};
-            clients.forEach(client => saved[client] = 0);
-            return saved;
-          });
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [isListening, setIsListening] = useState(false);
-          const [editMode, setEditMode] = useState(false);
-          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }));
-          const [transcript, setTranscript] = useState('');
-          const [showRetry, setShowRetry] = useState(false);
-          const recognitionRef = useRef(null);
-          const isListeningRef = useRef(false);
-          const currentIndexRef = useRef(0);
-
-          useEffect(() => {
-            currentIndexRef.current = currentIndex;
-          }, [currentIndex]);
-
-          useEffect(() => {
-            isListeningRef.current = isListening;
-          }, [isListening]);
-
-          useEffect(() => {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              const recog = new SpeechRecognition();
-              recog.continuous = false;
-              recog.interimResults = false;
-              recog.lang = language;
-
-              recog.onresult = (event) => {
-                const spokenText = event.results[0][0].transcript;
-                setTranscript(spokenText);
-                setShowRetry(false);
-                
-                const matches = spokenText.match(/\d+/);
-                let number = 0;
-                
-                if (matches) {
-                  number = parseInt(matches[0]);
-                } else {
-                  const wordToNum = {
-                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
-                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70,
-                    'eighty': 80, 'ninety': 90, 'hundred': 100, 'one hundred': 100,
-                    'two hundred': 200, 'three hundred': 300,
-                    'shunya': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
-                    'cheh': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
-                    'bees': 20, 'bis': 20, 'tees': 30, 'chalis': 40, 'pachas': 50,
-                    'saath': 60, 'sattar': 70, 'assi': 80, 'nabbe': 90,
-                    'sau': 100, 'do sau': 200, 'teen sau': 300
-                  };
-                  
-                  const lowerText = spokenText.toLowerCase();
-                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
-                    }
-                  }
-                }
-                
-                const idx = currentIndexRef.current;
-                const client = clients[idx];
-                
-                setOrders(prev => {
-                  const newOrders = { ...prev, [client]: number };
-                  return newOrders;
-                });
-              };
-
-              recog.onerror = (event) => {
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                  setShowRetry(true);
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                  setShowRetry(true);
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                  setShowRetry(true);
-                }
-              };
-
-              recog.onend = () => {
-                if (isListeningRef.current && !showRetry) {
-                  setShowRetry(true);
-                }
-              };
-
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              setShowRetry(false);
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser. Please use Chrome.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            setShowRetry(false);
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              setShowRetry(true);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            setShowRetry(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {}
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-            setShowRetry(false);
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName} from the list?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="container">
-              <div className="header">
-                <h1>NMD Orders</h1>
-                <p>Voice-powered order management system</p>
-              </div>
-
-              <div className="language-selector">
-                <label>Voice Language</label>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  disabled={isListening}
-                >
-                  <option value="en-IN">English (India)</option>
-                  <option value="hi-IN">हिंदी (Hindi)</option>
-                </select>
-                <div className="hint">
-                  English: "twenty", "fifty", "hundred"<br/>
-                  Hindi: "bees", "pachas", "sau"
-                </div>
-              </div>
-
-              <div className="action-buttons">
-                {!isListening ? (
-                  <button onClick={startVoiceEntry} className="btn btn-start">
-                    ▶ Start Voice Entry
-                  </button>
-                ) : (
-                  <button onClick={stopVoiceEntry} className="btn btn-stop">
-                    ◼ Stop
-                  </button>
-                )}
-                
-                <button onClick={() => setEditMode(!editMode)} className="btn btn-edit">
-                  ✏️ {editMode ? 'Done Editing' : 'Edit Orders'}
-                </button>
-                
-                <button onClick={copyToClipboard} className="btn btn-copy">
-                  📋 Copy for WhatsApp
-                </button>
-                
-                <button onClick={resetOrders} className="btn btn-reset">
-                  ✕ Reset All
-                </button>
-
-                <button onClick={() => setShowAddClient(!showAddClient)} className="btn btn-add">
-                  {showAddClient ? '✕ Cancel' : '+ Add Client'}
-                </button>
-              </div>
-
-              {showAddClient && (
-                <div className="add-client-form">
-                  <label>New Client Name</label>
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      value={newClientName}
-                      onChange={(e) => setNewClientName(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                      placeholder="Enter client name"
-                    />
-                    <button onClick={addNewClient} className="btn btn-start">
-                      Add
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {isListening && (
-                <div className="listening-card">
-                  <div className="mic-icon">🎤</div>
-                  <div className="current-client">
-                    {clients[currentIndex]}
-                  </div>
-                  <div className="order-value">
-                    {orders[clients[currentIndex]]}
-                  </div>
-                  {transcript && (
-                    <div className="transcript">{transcript}</div>
-                  )}
-                  
-                  <div className="controls">
-                    <button onClick={retryCurrentClient} className="btn btn-add">
-                      🔄 Retry
-                    </button>
-                    <button onClick={confirmAndNext} className="btn btn-start">
-                      ✓ Confirm & Next
-                    </button>
-                    <button onClick={skipToNext} className="btn btn-edit">
-                      ⏭️ Skip
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className="date-input">
-                <label>Date</label>
-                <input
-                  type="text"
-                  value={currentDate}
-                  onChange={(e) => setCurrentDate(e.target.value)}
-                />
-              </div>
-
-              <div className="orders-grid">
-                {clients.map((client, idx) => (
-                  <div
-                    key={client}
-                    className={`order-card ${idx === currentIndex && isListening ? 'active' : ''}`}
-                  >
-                    <button
-                      onClick={() => removeClient(client)}
-                      className="remove-btn"
-                      title="Remove client"
-                    >
-                      ✕
-                    </button>
-                    <div className="client-name">{client}</div>
-                    {editMode ? (
-                      <input
-                        type="number"
-                        value={orders[client]}
-                        onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
-                      />
-                    ) : (
-                      <div className="order-value">{orders[client]}</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="totals">
-                <div className="total-item">
-                  <div className="label">Total Pieces</div>
-                  <div className="value">{totalPieces}</div>
-                </div>
-                <div className="total-item">
-                  <div className="label">Total Crates</div>
-                  <div className="value">{totalCrates}</div>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
-    </script>
-</body>
-</html>          const [isListening, setIsListening] = useState(false);
-          const [editMode, setEditMode] = useState(false);
-          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }));
-          const [transcript, setTranscript] = useState('');
-          const [showRetry, setShowRetry] = useState(false);
-          const recognitionRef = useRef(null);
-          const isListeningRef = useRef(false);
-          const currentIndexRef = useRef(0);
-
-          useEffect(() => {
-            currentIndexRef.current = currentIndex;
-          }, [currentIndex]);
-
-          useEffect(() => {
-            isListeningRef.current = isListening;
-          }, [isListening]);
-
-          useEffect(() => {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              const recog = new SpeechRecognition();
-              recog.continuous = false;
-              recog.interimResults = false;
-              recog.lang = language;
-
-              recog.onresult = (event) => {
-                const spokenText = event.results[0][0].transcript;
-                setTranscript(spokenText);
-                setShowRetry(false);
-                console.log('Heard:', spokenText);
-                
-                const matches = spokenText.match(/\d+/);
-                let number = 0;
-                
-                if (matches) {
-                  number = parseInt(matches[0]);
-                } else {
-                  const wordToNum = {
-                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
-                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'twenty one': 21, 'twenty two': 22, 'twenty three': 23, 'twenty four': 24, 'twenty five': 25,
-                    'twenty six': 26, 'twenty seven': 27, 'twenty eight': 28, 'twenty nine': 29, 'thirty': 30,
-                    'thirty one': 31, 'thirty two': 32, 'thirty three': 33, 'thirty four': 34, 'thirty five': 35,
-                    'thirty six': 36, 'thirty seven': 37, 'thirty eight': 38, 'thirty nine': 39, 'forty': 40,
-                    'forty one': 41, 'forty two': 42, 'forty three': 43, 'forty four': 44, 'forty five': 45,
-                    'forty six': 46, 'forty seven': 47, 'forty eight': 48, 'forty nine': 49, 'fifty': 50,
-                    'fifty one': 51, 'fifty two': 52, 'fifty three': 53, 'fifty four': 54, 'fifty five': 55,
-                    'fifty six': 56, 'fifty seven': 57, 'fifty eight': 58, 'fifty nine': 59, 'sixty': 60,
-                    'sixty one': 61, 'sixty two': 62, 'sixty three': 63, 'sixty four': 64, 'sixty five': 65,
-                    'sixty six': 66, 'sixty seven': 67, 'sixty eight': 68, 'sixty nine': 69, 'seventy': 70,
-                    'seventy one': 71, 'seventy two': 72, 'seventy three': 73, 'seventy four': 74, 'seventy five': 75,
-                    'seventy six': 76, 'seventy seven': 77, 'seventy eight': 78, 'seventy nine': 79, 'eighty': 80,
-                    'eighty one': 81, 'eighty two': 82, 'eighty three': 83, 'eighty four': 84, 'eighty five': 85,
-                    'eighty six': 86, 'eighty seven': 87, 'eighty eight': 88, 'eighty nine': 89, 'ninety': 90,
-                    'ninety one': 91, 'ninety two': 92, 'ninety three': 93, 'ninety four': 94, 'ninety five': 95,
-                    'ninety six': 96, 'ninety seven': 97, 'ninety eight': 98, 'ninety nine': 99, 'hundred': 100,
-                    'one hundred': 100, 'hundred one': 101, 'hundred two': 102, 'hundred three': 103, 'hundred four': 104,
-                    'hundred five': 105, 'hundred six': 106, 'hundred seven': 107, 'hundred eight': 108, 'hundred nine': 109,
-                    'hundred ten': 110, 'hundred eleven': 111, 'hundred twelve': 112, 'hundred thirteen': 113, 'hundred fourteen': 114,
-                    'hundred fifteen': 115, 'hundred sixteen': 116, 'hundred seventeen': 117, 'hundred eighteen': 118, 'hundred nineteen': 119,
-                    'hundred twenty': 120, 'hundred twenty one': 121, 'hundred twenty two': 122, 'hundred twenty three': 123, 'hundred twenty four': 124,
-                    'hundred twenty five': 125, 'hundred twenty six': 126, 'hundred twenty seven': 127, 'hundred twenty eight': 128, 'hundred twenty nine': 129,
-                    'hundred thirty': 130, 'hundred thirty five': 135, 'hundred forty': 140, 'hundred forty five': 145, 'hundred fifty': 150,
-                    'hundred fifty five': 155, 'hundred sixty': 160, 'hundred sixty five': 165, 'hundred seventy': 170, 'hundred seventy five': 175,
-                    'hundred eighty': 180, 'hundred eighty five': 185, 'hundred ninety': 190, 'hundred ninety five': 195, 'two hundred': 200,
-                    'two hundred five': 205, 'two hundred ten': 210, 'two hundred fifteen': 215, 'two hundred twenty': 220, 'two hundred twenty five': 225,
-                    'two hundred thirty': 230, 'two hundred thirty five': 235, 'two hundred forty': 240, 'two hundred forty five': 245,
-                    'two hundred fifty': 250, 'two hundred fifty five': 255, 'two hundred sixty': 260, 'two hundred sixty five': 265,
-                    'two hundred seventy': 270, 'two hundred seventy five': 275, 'two hundred eighty': 280, 'two hundred eighty five': 285,
-                    'two hundred ninety': 290, 'two hundred ninety five': 295, 'three hundred': 300,
-                    'shunya': 0, 'zero': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
-                    'cheh': 6, 'chhah': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
-                    'gyarah': 11, 'barah': 12, 'terah': 13, 'chaudah': 14, 'pandrah': 15,
-                    'solah': 16, 'satrah': 17, 'atharah': 18, 'unnis': 19, 'bees': 20, 'bis': 20,
-                    'ikkis': 21, 'bais': 22, 'teis': 23, 'chaubis': 24, 'pachchis': 25, 'pachis': 25,
-                    'chhabbis': 26, 'sattais': 27, 'atthais': 28, 'unatis': 29, 'tees': 30, 'tis': 30,
-                    'ikattis': 31, 'battis': 32, 'taintis': 33, 'chautis': 34, 'paintis': 35, 'paithalees': 35,
-                    'chhattis': 36, 'saintis': 37, 'adhtis': 38, 'untalis': 39, 'chalis': 40, 'chaalees': 40,
-                    'iktalis': 41, 'bayalis': 42, 'taintalis': 43, 'chavalis': 44, 'paintalis': 45, 'paitalis': 45,
-                    'chhiyalis': 46, 'saintalis': 47, 'adhtalis': 48, 'unchास': 49, 'pachas': 50, 'pachास': 50,
-                    'ikyavan': 51, 'bavan': 52, 'tirpan': 53, 'chauvan': 54, 'pachpan': 55, 'pachhpan': 55,
-                    'chhappan': 56, 'sattavan': 57, 'atthavan': 58, 'unsath': 59, 'saath': 60, 'sath': 60,
-                    'iksath': 61, 'basath': 62, 'tirsath': 63, 'chausath': 64, 'painsath': 65, 'paisath': 65,
-                    'chhiyasath': 66, 'sarsath': 67, 'adhasath': 68, 'unhattar': 69, 'sattar': 70, 'satar': 70,
-                    'ikhattar': 71, 'bahattar': 72, 'tihattar': 73, 'chauhattar': 74, 'pachhattar': 75, 'pachattar': 75,
-                    'chhihattar': 76, 'sathattar': 77, 'athhattar': 78, 'unasi': 79, 'assi': 80, 'ashi': 80,
-                    'ikyasi': 81, 'bayasi': 82, 'tirasi': 83, 'chaurasi': 84, 'pachasi': 85, 'pachhasi': 85,
-                    'chhiyasi': 86, 'satasi': 87, 'athasi': 88, 'navasi': 89, 'nabbe': 90, 'navve': 90,
-                    'ikyanve': 91, 'banve': 92, 'tirانve': 93, 'chauanve': 94, 'pachanve': 95, 'pachانve': 95,
-                    'chhiانve': 96, 'satانve': 97, 'athانve': 98, 'ninyanve': 99, 'sau': 100, 'so': 100,
-                    'ek sau': 100, 'sau ek': 101, 'sau do': 102, 'sau teen': 103, 'sau char': 104, 'sau paanch': 105,
-                    'sau cheh': 106, 'sau saat': 107, 'sau aath': 108, 'sau nau': 109, 'sau das': 110,
-                    'sau gyarah': 111, 'sau barah': 112, 'sau pandrah': 115, 'sau bees': 120, 'sau bis': 120,
-                    'sau pachchis': 125, 'sau pachis': 125, 'sau tees': 130, 'sau tis': 130, 'sau paintis': 135,
-                    'sau chalis': 140, 'sau paintalis': 145, 'sau pachas': 150, 'sau pachpan': 155, 'sau saath': 160,
-                    'sau paisath': 165, 'sau sattar': 170, 'sau pachattar': 175, 'sau assi': 180, 'sau pachasi': 185,
-                    'sau nabbe': 190, 'sau pachanve': 195, 'do sau': 200, 'do so': 200,
-                    'do sau paanch': 205, 'do sau das': 210, 'do sau pandrah': 215, 'do sau bees': 220, 'do sau pachchis': 225,
-                    'do sau tees': 230, 'do sau paintis': 235, 'do sau chalis': 240, 'do sau paintalis': 245,
-                    'do sau pachas': 250, 'do sau pachpan': 255, 'do sau saath': 260, 'do sau paisath': 265,
-                    'do sau sattar': 270, 'do sau pachattar': 275, 'do sau assi': 280, 'do sau pachasi': 285,
-                    'do sau nabbe': 290, 'do sau pachanve': 295, 'teen sau': 300, 'teen so': 300
-                  };
-                  
-                  const lowerText = spokenText.toLowerCase();
-                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
-                    }
-                  }
-                }
-
-                console.log('Parsed number:', number);
-                
-                const idx = currentIndexRef.current;
-                const client = clients[idx];
-                console.log('Setting order for', client, '=', number);
-                
-                setOrders(prev => {
-                  const newOrders = { ...prev, [client]: number };
-                  console.log('New orders:', newOrders);
-                  return newOrders;
-                });
-              };
-
-              recog.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                  setShowRetry(true);
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                  setShowRetry(true);
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                  setShowRetry(true);
-                }
-              };
-
-              recog.onend = () => {
-                console.log('Recognition ended');
-                if (isListeningRef.current && !showRetry) {
-                  setShowRetry(true);
-                }
-              };
-
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              setShowRetry(false);
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser. Please use Chrome.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            setShowRetry(false);
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              console.log('Start error:', e);
-              setShowRetry(true);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            setShowRetry(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {
-                console.log('Stop error:', e);
-              }
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-            setShowRetry(false);
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName} from the list?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="min-h-screen bg-slate-900 p-4">
-              <div className="max-w-6xl mx-auto">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-t-3xl shadow-2xl p-8 mb-0">
-                  <h1 className="text-4xl font-bold text-white text-center mb-2">
-                    📦 NMD Orders
-                  </h1>
-                  <p className="text-blue-100 text-center text-sm">Voice-Powered Order Management</p>
-                </div>
-
-                <div className="bg-white rounded-b-3xl shadow-2xl p-6">
-                  {/* Language Selector */}
-                  <div className="mb-6 p-5 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 rounded-xl">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl">🌐</span>
-                      <label className="text-sm font-bold text-gray-800">Voice Language</label>
-                    </div>
-                    <select
-                      value={language}
-                      onChange={(e) => setLanguage(e.target.value)}
-                      className="w-full p-3 border-2 border-amber-200 rounded-lg bg-white font-medium focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 transition"
-                      disabled={isListening}
-                    >
-                      <option value="en-IN">🇮🇳 English (India)</option>
-                      <option value="hi-IN">🇮🇳 हिंदी (Hindi)</option>
-                    </select>
-                    <div className="mt-3 text-xs text-gray-600 bg-white rounded-lg p-3">
-                      <div className="font-semibold mb-1">💡 Examples:</div>
-                      <div className="space-y-1">
-                        <div>English: "twenty", "fifty", "hundred twenty five"</div>
-                        <div>Hindi: "bees", "pachas", "sau pachchis"</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Date Input */}
-                  <div className="mb-6">
-                    <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
-                      <span className="text-xl">📅</span> Date
-                    </label>
-                    <input
-                      type="text"
-                      value={currentDate}
-                      onChange={(e) => setCurrentDate(e.target.value)}
-                      className="w-full p-3 border-2 border-gray-300 rounded-lg font-medium focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
-                    />
-                  </div>
-
-                  {/* Control Buttons */}
-                  <div className="mb-6 flex gap-3 justify-center flex-wrap">
-                    {!isListening ? (
-                      <button
-                        onClick={startVoiceEntry}
-                        className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                      >
-                        <span className="text-xl">▶</span> Start Voice Entry
-                      </button>
-                    ) : (
-                      <button
-                        onClick={stopVoiceEntry}
-                        className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                      >
-                        <span className="text-xl">◼</span> Stop
-                      </button>
-                    )}
-                    
-                    <button
-                      onClick={() => setEditMode(!editMode)}
-                      className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <span className="text-xl">{editMode ? '✓' : '✏️'}</span> {editMode ? 'Done' : 'Edit'}
-                    </button>
-                    
-                    <button
-                      onClick={copyToClipboard}
-                      className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <span className="text-xl">📋</span> Copy
-                    </button>
-                    
-                    <button
-                      onClick={resetOrders}
-                      className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <span className="text-xl">↻</span> Reset
-                    </button>
-
-                    <button
-                      onClick={() => setShowAddClient(!showAddClient)}
-                      className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <span className="text-xl">{showAddClient ? '✕' : '+'}</span> {showAddClient ? 'Cancel' : 'Add Client'}
-                    </button>
-                  </div>
-
-                  {/* Add Client Form */}
-                  {showAddClient && (
-                    <div className="mb-6 p-5 bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-400 rounded-xl shadow-md animate-[fadeIn_0.3s]">
-                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <span className="text-xl">👤</span> New Client Name
-                      </label>
-                      <div className="flex gap-3">
-                        <input
-                          type="text"
-                          value={newClientName}
-                          onChange={(e) => setNewClientName(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                          placeholder="Enter client name..."
-                          className="flex-1 p-3 border-2 border-orange-200 rounded-lg focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200 transition font-medium"
-                        />
-                        <button
-                          onClick={addNewClient}
-                          className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transform hover:scale-105 transition"
-                        >
-                          Add
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Voice Entry Status */}
-                  {isListening && (
-                    <div className="mb-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 rounded-xl shadow-lg animate-[pulse_2s_ease-in-out_infinite]">
-                      <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-3xl animate-[bounce_1s_ease-in-out_infinite]">🎤</span>
-                        <div className="text-center">
-                          <div className="text-sm font-semibold text-gray-600 mb-1">Currently Recording</div>
-                          <div className="text-2xl font-bold text-gray-900">{clients[currentIndex]}</div>
-                        </div>
-                      </div>
-                      <div className="text-center mb-4">          const [isListening, setIsListening] = useState(false);
-          const [editMode, setEditMode] = useState(false);
-          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }));
-          const [transcript, setTranscript] = useState('');
-          const [showRetry, setShowRetry] = useState(false);
-          const recognitionRef = useRef(null);
-          const isListeningRef = useRef(false);
-          const currentIndexRef = useRef(0);
-
-          useEffect(() => {
-            currentIndexRef.current = currentIndex;
-          }, [currentIndex]);
-
-          useEffect(() => {
-            isListeningRef.current = isListening;
-          }, [isListening]);
-
-          useEffect(() => {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              const recog = new SpeechRecognition();
-              recog.continuous = false;
-              recog.interimResults = false;
-              recog.lang = language;
-
-              recog.onresult = (event) => {
-                const spokenText = event.results[0][0].transcript;
-                setTranscript(spokenText);
-                setShowRetry(false);
-                console.log('Heard:', spokenText);
-                
-                // Extract number from spoken text - just look for digits
-                const matches = spokenText.match(/\d+/);
-                let number = 0;
-                
-                if (matches) {
-                  number = parseInt(matches[0]);
-                } else {
-                  // Try word to number conversion (1-300)
-                  const wordToNum = {
-                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
-                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'twenty one': 21, 'twenty two': 22, 'twenty three': 23, 'twenty four': 24, 'twenty five': 25,
-                    'twenty six': 26, 'twenty seven': 27, 'twenty eight': 28, 'twenty nine': 29, 'thirty': 30,
-                    'thirty one': 31, 'thirty two': 32, 'thirty three': 33, 'thirty four': 34, 'thirty five': 35,
-                    'thirty six': 36, 'thirty seven': 37, 'thirty eight': 38, 'thirty nine': 39, 'forty': 40,
-                    'forty one': 41, 'forty two': 42, 'forty three': 43, 'forty four': 44, 'forty five': 45,
-                    'forty six': 46, 'forty seven': 47, 'forty eight': 48, 'forty nine': 49, 'fifty': 50,
-                    'fifty one': 51, 'fifty two': 52, 'fifty three': 53, 'fifty four': 54, 'fifty five': 55,
-                    'fifty six': 56, 'fifty seven': 57, 'fifty eight': 58, 'fifty nine': 59, 'sixty': 60,
-                    'sixty one': 61, 'sixty two': 62, 'sixty three': 63, 'sixty four': 64, 'sixty five': 65,
-                    'sixty six': 66, 'sixty seven': 67, 'sixty eight': 68, 'sixty nine': 69, 'seventy': 70,
-                    'seventy one': 71, 'seventy two': 72, 'seventy three': 73, 'seventy four': 74, 'seventy five': 75,
-                    'seventy six': 76, 'seventy seven': 77, 'seventy eight': 78, 'seventy nine': 79, 'eighty': 80,
-                    'eighty one': 81, 'eighty two': 82, 'eighty three': 83, 'eighty four': 84, 'eighty five': 85,
-                    'eighty six': 86, 'eighty seven': 87, 'eighty eight': 88, 'eighty nine': 89, 'ninety': 90,
-                    'ninety one': 91, 'ninety two': 92, 'ninety three': 93, 'ninety four': 94, 'ninety five': 95,
-                    'ninety six': 96, 'ninety seven': 97, 'ninety eight': 98, 'ninety nine': 99, 'hundred': 100,
-                    'one hundred': 100, 'hundred one': 101, 'hundred two': 102, 'hundred three': 103, 'hundred four': 104,
-                    'hundred five': 105, 'hundred six': 106, 'hundred seven': 107, 'hundred eight': 108, 'hundred nine': 109,
-                    'hundred ten': 110, 'hundred eleven': 111, 'hundred twelve': 112, 'hundred thirteen': 113, 'hundred fourteen': 114,
-                    'hundred fifteen': 115, 'hundred sixteen': 116, 'hundred seventeen': 117, 'hundred eighteen': 118, 'hundred nineteen': 119,
-                    'hundred twenty': 120, 'hundred twenty one': 121, 'hundred twenty two': 122, 'hundred twenty three': 123, 'hundred twenty four': 124,
-                    'hundred twenty five': 125, 'hundred twenty six': 126, 'hundred twenty seven': 127, 'hundred twenty eight': 128, 'hundred twenty nine': 129,
-                    'hundred thirty': 130, 'hundred thirty five': 135, 'hundred forty': 140, 'hundred forty five': 145, 'hundred fifty': 150,
-                    'hundred fifty five': 155, 'hundred sixty': 160, 'hundred sixty five': 165, 'hundred seventy': 170, 'hundred seventy five': 175,
-                    'hundred eighty': 180, 'hundred eighty five': 185, 'hundred ninety': 190, 'hundred ninety five': 195, 'two hundred': 200,
-                    'two hundred five': 205, 'two hundred ten': 210, 'two hundred fifteen': 215, 'two hundred twenty': 220, 'two hundred twenty five': 225,
-                    'two hundred thirty': 230, 'two hundred thirty five': 235, 'two hundred forty': 240, 'two hundred forty five': 245,
-                    'two hundred fifty': 250, 'two hundred fifty five': 255, 'two hundred sixty': 260, 'two hundred sixty five': 265,
-                    'two hundred seventy': 270, 'two hundred seventy five': 275, 'two hundred eighty': 280, 'two hundred eighty five': 285,
-                    'two hundred ninety': 290, 'two hundred ninety five': 295, 'three hundred': 300,
-                    // Hindi/Hinglish numbers (0-300)
-                    'shunya': 0, 'zero': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
-                    'cheh': 6, 'chhah': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
-                    'gyarah': 11, 'barah': 12, 'terah': 13, 'chaudah': 14, 'pandrah': 15,
-                    'solah': 16, 'satrah': 17, 'atharah': 18, 'unnis': 19, 'bees': 20, 'bis': 20,
-                    'ikkis': 21, 'bais': 22, 'teis': 23, 'chaubis': 24, 'pachchis': 25, 'pachis': 25,
-                    'chhabbis': 26, 'sattais': 27, 'atthais': 28, 'unatis': 29, 'tees': 30, 'tis': 30,
-                    'ikattis': 31, 'battis': 32, 'taintis': 33, 'chautis': 34, 'paintis': 35, 'paithalees': 35,
-                    'chhattis': 36, 'saintis': 37, 'adhtis': 38, 'untalis': 39, 'chalis': 40, 'chaalees': 40,
-                    'iktalis': 41, 'bayalis': 42, 'taintalis': 43, 'chavalis': 44, 'paintalis': 45, 'paitalis': 45,
-                    'chhiyalis': 46, 'saintalis': 47, 'adhtalis': 48, 'unchास': 49, 'pachas': 50, 'pachास': 50,
-                    'ikyavan': 51, 'bavan': 52, 'tirpan': 53, 'chauvan': 54, 'pachpan': 55, 'pachhpan': 55,
-                    'chhappan': 56, 'sattavan': 57, 'atthavan': 58, 'unsath': 59, 'saath': 60, 'sath': 60,
-                    'iksath': 61, 'basath': 62, 'tirsath': 63, 'chausath': 64, 'painsath': 65, 'paisath': 65,
-                    'chhiyasath': 66, 'sarsath': 67, 'adhasath': 68, 'unhattar': 69, 'sattar': 70, 'satar': 70,
-                    'ikhattar': 71, 'bahattar': 72, 'tihattar': 73, 'chauhattar': 74, 'pachhattar': 75, 'pachattar': 75,
-                    'chhihattar': 76, 'sathattar': 77, 'athhattar': 78, 'unasi': 79, 'assi': 80, 'ashi': 80,
-                    'ikyasi': 81, 'bayasi': 82, 'tirasi': 83, 'chaurasi': 84, 'pachasi': 85, 'pachhasi': 85,
-                    'chhiyasi': 86, 'satasi': 87, 'athasi': 88, 'navasi': 89, 'nabbe': 90, 'navve': 90,
-                    'ikyanve': 91, 'banve': 92, 'tirانve': 93, 'chauanve': 94, 'pachanve': 95, 'pachانve': 95,
-                    'chhiانve': 96, 'satانve': 97, 'athانve': 98, 'ninyanve': 99, 'sau': 100, 'so': 100,
-                    'ek sau': 100, 'sau ek': 101, 'sau do': 102, 'sau teen': 103, 'sau char': 104, 'sau paanch': 105,
-                    'sau cheh': 106, 'sau saat': 107, 'sau aath': 108, 'sau nau': 109, 'sau das': 110,
-                    'sau gyarah': 111, 'sau barah': 112, 'sau pandrah': 115, 'sau bees': 120, 'sau bis': 120,
-                    'sau pachchis': 125, 'sau pachis': 125, 'sau tees': 130, 'sau tis': 130, 'sau paintis': 135,
-                    'sau chalis': 140, 'sau paintalis': 145, 'sau pachas': 150, 'sau pachpan': 155, 'sau saath': 160,
-                    'sau paisath': 165, 'sau sattar': 170, 'sau pachattar': 175, 'sau assi': 180, 'sau pachasi': 185,
-                    'sau nabbe': 190, 'sau pachanve': 195, 'do sau': 200, 'do so': 200,
-                    'do sau paanch': 205, 'do sau das': 210, 'do sau pandrah': 215, 'do sau bees': 220, 'do sau pachchis': 225,
-                    'do sau tees': 230, 'do sau paintis': 235, 'do sau chalis': 240, 'do sau paintalis': 245,
-                    'do sau pachas': 250, 'do sau pachpan': 255, 'do sau saath': 260, 'do sau paisath': 265,
-                    'do sau sattar': 270, 'do sau pachattar': 275, 'do sau assi': 280, 'do sau pachasi': 285,
-                    'do sau nabbe': 290, 'do sau pachanve': 295, 'teen sau': 300, 'teen so': 300
-                  };
-                  
-                  const lowerText = spokenText.toLowerCase();
-                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
-                    }
-                  }
-                }
-
-                console.log('Parsed number:', number);
-                
-                const idx = currentIndexRef.current;
-                const client = clients[idx];
-                console.log('Setting order for', client, '=', number);
-                
-                setOrders(prev => {
-                  const newOrders = { ...prev, [client]: number };
-                  console.log('New orders:', newOrders);
-                  return newOrders;
-                });
-              };
-
-              recog.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                  setShowRetry(true);
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                  setShowRetry(true);
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                  setShowRetry(true);
-                }
-              };
-
-              recog.onend = () => {
-                console.log('Recognition ended');
-                if (isListeningRef.current && !showRetry) {
-                  setShowRetry(true);
-                }
-              };
-
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              setShowRetry(false);
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser. Please use Chrome.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            setShowRetry(false);
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              console.log('Start error:', e);
-              setShowRetry(true);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            setShowRetry(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {
-                console.log('Stop error:', e);
-              }
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-            setShowRetry(false);
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName} from the list?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-              <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
-                <h1 className="text-3xl font-bold text-center mb-6 text-indigo-600">
-                  📦 NMD Orders
-                </h1>
-
-                <div className="mb-6 p-4 bg-yellow-50 border-2 border-yellow-300 rounded-lg">
-                  <label className="block text-sm font-semibold mb-2">Voice Language:</label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full p-2 border-2 border-gray-300 rounded-lg"
-                    disabled={isListening}
-                  >
-                    <option value="en-IN">English (India)</option>
-                    <option value="hi-IN">हिंदी (Hindi)</option>
-                  </select>
-                  <p className="text-xs text-gray-600 mt-2">
-                    English: "twenty", "fifty", "hundred twenty five"<br/>
-                    Hinglish: "bees", "pachas", "sau pachchis"
-                  </p>
-                </div>
-
-                <div className="mb-6 flex gap-4 justify-center flex-wrap">
-                  {!isListening ? (
-                    <button
-                      onClick={startVoiceEntry}
-                      className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                    >
-                      ▶ Start Voice Entry
-                    </button>
-                  ) : (
-                    <button
-                      onClick={stopVoiceEntry}
-                      className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                    >
-                      ◼ Stop
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => setEditMode(!editMode)}
-                    className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                  >
-                    ✏️ {editMode ? 'Done Editing' : 'Edit Orders'}
-                  </button>
-                  
-                  <button
-                    onClick={copyToClipboard}
-                    className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                  >
-                    📋 Copy for WhatsApp
-                  </button>
-                  
-                  <button
-                    onClick={resetOrders}
-                    className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                  >
-                    ✕ Reset All
-                  </button>
-
-                  <button
-                    onClick={() => setShowAddClient(!showAddClient)}
-                    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition"
-                  >
-                    {showAddClient ? '✕ Cancel' : '+ Add Client'}
-                  </button>
-                </div>
-
-                {showAddClient && (
-                  <div className="mb-6 p-4 bg-orange-50 border-2 border-orange-300 rounded-lg">
-                    <label className="block text-sm font-semibold mb-2">New Client Name:</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newClientName}
-                        onChange={(e) => setNewClientName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                        placeholder="Enter client name"
-                        className="flex-1 p-2 border-2 border-gray-300 rounded-lg"
-                      />
-                      <button
-                        onClick={addNewClient}
-                        className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {isListening && (
-                  <div className="mb-6 p-4 bg-green-100 border-2 border-green-500 rounded-lg">
-                    <div className="flex items-center justify-center gap-2 mb-3">
-                      <span className="text-2xl animate-pulse">🎤</span>
-                      <span className="text-lg font-semibold">Current: {clients[currentIndex]}</span>
-                    </div>
-                    <div className="text-center mb-3">
-                      <div className="text-2xl font-bold text-indigo-600">
-                        Order: {orders[clients[currentIndex]]}
-                      </div>
-                    </div>
-                    {transcript && (
-                      <div className="text-sm bg-white p-2 rounded mb-3 text-center">
-                        {transcript}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2 justify-center flex-wrap">
-                      <button
-                        onClick={retryCurrentClient}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold"
-                      >
-                        🔄 Retry
-                      </button>
-                      <button
-                        onClick={confirmAndNext}
-                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
-                      >
-                        ✓ Confirm & Next
-                      </button>
-                      <button
-                        onClick={skipToNext}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"
-                      >
-                        ⏭️ Skip
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="mb-6">
-                  <label className="block text-sm font-semibold mb-2">Date:</label>
-                  <input
-                    type="text"
-                    value={currentDate}
-                    onChange={(e) => setCurrentDate(e.target.value)}
-                    className="w-full p-2 border-2 border-gray-300 rounded-lg"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-h-96 overflow-y-auto p-2">
-                  {clients.map((client, idx) => (
-                    <div
-                      key={client}
-                      className={`p-3 rounded-lg border-2 transition relative ${
-                        idx === currentIndex && isListening
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-300 bg-gray-50'
-                      }`}
-                    >
-                      <button
-                        onClick={() => removeClient(client)}
-                        className="absolute top-1 right-1 text-red-500 hover:text-red-700 text-xs"
-                        title="Remove client"
-                      >
-                        ✕
-                      </button>
-                      <div className="font-semibold text-gray-700 mb-1">{client}</div>
-                      {editMode ? (
-                        <input
-                          type="number"
-                          value={orders[client]}
-                          onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
-                          className="w-full p-2 border border-gray-300 rounded"
-                        />
-                      ) : (
-                        <div className="text-2xl font-bold text-indigo-600">{orders[client]}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-indigo-50 p-4 rounded-lg">
-                  <div className="text-xl font-bold text-gray-800 mb-2">
-                    Total Pieces: <span className="text-indigo-600">{totalPieces}</span>
-                  </div>
-                  <div className="text-xl font-bold text-gray-800">
-                    Total Crates: <span className="text-indigo-600">{totalCrates}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
+</html><VoiceOrderEntry />, document.getElementById('root'));
     </script>
 </body>
 </html>
