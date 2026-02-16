@@ -303,27 +303,33 @@
             const totalCrates = (totalPieces / 6).toFixed(2);
 
             // Updated Formatting Logic
+            // Updated Formatting Logic (Systematic & Attractive)
             const formatForWhatsApp = () => {
                 const tomorrow = new Date();
                 tomorrow.setDate(tomorrow.getDate() + 1);
-                const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
+                const dateStr = tomorrow.toLocaleDateString('en-GB', {
                     day: '2-digit', month: 'short', year: 'numeric'
                 });
 
-                let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
+                // Calculate max length for alignment
+                const maxClientLen = Math.max(...clients.map(c => c.length));
+
+                let text = `📅 *Order for ${dateStr}*\n\n`;
+                text += `\`\`\`\n`; // Start monospace block
+                text += `Client${' '.repeat(maxClientLen - 6)}   Qty\n`;
+                text += `─`.repeat(maxClientLen + 6) + `\n`;
 
                 clients.forEach(client => {
                     const order = orders[client];
-                    // Improved tab logic roughly based on length
-                    let tabs = '\t\t';
-                    if (client.length > 7) tabs = '\t';
-                    if (client.length > 15) tabs = '';
-
-                    text += `\t${client}.${tabs}=\t${order}\t\n`;
+                    const name = client.padEnd(maxClientLen, ' ');
+                    const qty = order.toString().padStart(3, ' ');
+                    text += `${name} : ${qty}\n`;
                 });
 
-                text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-                text += `\tTotal Crates  =\t${totalCrates}`;
+                text += `─`.repeat(maxClientLen + 6) + `\n`;
+                text += `Total Pcs${' '.repeat(maxClientLen - 9)} : ${totalPieces}\n`;
+                text += `Total Crates${' '.repeat(maxClientLen - 12)}: ${totalCrates}\n`;
+                text += `\`\`\``; // End monospace block
 
                 return text;
             };
@@ -483,8 +489,8 @@
                             <div
                                 key={client}
                                 className={`glass-card rounded-xl p-4 relative group ${idx === currentIndex && isListening
-                                        ? 'border-emerald-500 bg-emerald-900/10 ring-2 ring-emerald-500/20 transform scale-105 z-10'
-                                        : ''
+                                    ? 'border-emerald-500 bg-emerald-900/10 ring-2 ring-emerald-500/20 transform scale-105 z-10'
+                                    : ''
                                     }`}
                             >
                                 <div className="flex justify-between items-start mb-2">
