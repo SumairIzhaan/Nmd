@@ -1,858 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>NMD Orders</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  body{font-family:'Poppins',sans-serif;background:linear-gradient(180deg,#1a2a3a 0%,#1e3a5f 40%,#2d5f8a 100%);min-height:100vh;overflow-x:hidden;}
 
-  /* drops */
-  .drops{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
-  .drop{position:absolute;border-radius:50%;background:#fff;opacity:.12;animation:fall linear infinite;}
-  .drop:nth-child(1){width:16px;height:16px;left:4%;animation-duration:9s;animation-delay:0s;}
-  .drop:nth-child(2){width:10px;height:10px;left:14%;animation-duration:11s;animation-delay:2s;}
-  .drop:nth-child(3){width:20px;height:20px;left:28%;animation-duration:8s;animation-delay:1s;}
-  .drop:nth-child(4){width:8px;height:8px;left:42%;animation-duration:12s;animation-delay:3s;}
-  .drop:nth-child(5){width:14px;height:14px;left:58%;animation-duration:7s;animation-delay:0.5s;}
-  .drop:nth-child(6){width:18px;height:18px;left:72%;animation-duration:10s;animation-delay:2.5s;}
-  .drop:nth-child(7){width:12px;height:12px;left:84%;animation-duration:9s;animation-delay:1.5s;}
-  .drop:nth-child(8){width:9px;height:9px;left:93%;animation-duration:11s;animation-delay:4s;}
-  @keyframes fall{0%{transform:translateY(-30px);}100%{transform:translateY(100vh);}}
-
-  /* floating badges */
-  .fbadge{position:fixed;pointer-events:none;opacity:.06;animation:bob 5s ease-in-out infinite;z-index:0;}
-  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-16px);}}
-
-  /* layout */
-  .wrap{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:16px 14px 50px;}
-
-  /* header */
-  .header{background:linear-gradient(135deg,#fff,#f0f7ff);border-radius:24px;padding:24px 18px 20px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.18);margin-bottom:14px;position:relative;overflow:hidden;}
-  .header::before{content:'';position:absolute;top:-25px;right:-25px;width:100px;height:100px;background:rgba(45,106,159,.08);border-radius:50%;}
-  .header .h-icon{font-size:34px;display:block;margin-bottom:4px;}
-  .header h1{font-size:24px;font-weight:800;color:#1e3a5f;}
-  .header p{font-size:12px;color:#7a9bb5;margin-top:2px;}
-
-  /* card */
-  .card{background:#fff;border-radius:18px;padding:16px;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
-  .card-label{font-size:13px;font-weight:700;color:#1e3a5f;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
-  .card-label .lbl-ico{font-size:17px;}
-
-  /* inputs */
-  .sel,.inp{width:100%;padding:11px 13px;border:2px solid #dce8f0;border-radius:12px;font-family:inherit;font-size:14px;font-weight:600;color:#333;background:#fff;transition:border .2s;}
-  .sel:focus,.inp:focus{outline:none;border-color:#2d6a9f;}
-  .sel{cursor:pointer;}
-
-  /* hint */
-  .hint{margin-top:9px;background:#eef5fb;border-radius:10px;padding:9px 11px;font-size:11.5px;color:#5a7a9a;line-height:1.7;}
-  .hint b{color:#1e3a5f;}
-
-  /* btn grid */
-  .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-  .btn{border:none;border-radius:13px;padding:13px 8px;font-family:inherit;font-size:13.5px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 10px rgba(0,0,0,.18);transition:transform .15s,box-shadow .15s;}
-  .btn:active{transform:scale(.94);box-shadow:0 2px 5px rgba(0,0,0,.18);}
-  .btn .ico{font-size:15px;}
-  .btn-start{background:linear-gradient(135deg,#27ae60,#2ecc71);}
-  .btn-stop{background:linear-gradient(135deg,#e74c3c,#c0392b);}
-  .btn-edit{background:linear-gradient(135deg,#2980b9,#3498db);}
-  .btn-copy{background:linear-gradient(135deg,#8e44ad,#9b59b6);}
-  .btn-reset{background:linear-gradient(135deg,#7f8c8d,#95a5a6);}
-  .btn-add{background:linear-gradient(135deg,#e67e22,#f39c12);grid-column:span 2;}
-  .btn-retry{background:linear-gradient(135deg,#f39c12,#e67e22);}
-  .btn-next{background:linear-gradient(135deg,#27ae60,#2ecc71);}
-  .btn-skip{background:linear-gradient(135deg,#2980b9,#3498db);}
-
-  /* add form */
-  .add-form{background:#fff3e0;border:2px solid #ffe0b2;border-radius:13px;padding:13px;margin-top:10px;}
-  .add-row{display:flex;gap:9px;margin-top:7px;}
-  .add-row .inp{flex:1;border-color:#ffcc80;}
-  .add-row .btn{min-width:68px;padding:9px;}
-
-  /* listen panel */
-  .listen-panel{background:linear-gradient(135deg,#e8f8f0,#d4f0e2);border:2px solid #27ae60;border-radius:17px;padding:20px;text-align:center;animation:glowP 2s ease-in-out infinite;}
-  @keyframes glowP{0%,100%{box-shadow:0 0 10px rgba(39,174,96,.25);}50%{box-shadow:0 0 22px rgba(39,174,96,.4);}}
-  .listen-panel .mic{font-size:42px;display:block;animation:mic 1.4s ease-in-out infinite;}
-  @keyframes mic{0%,100%{transform:scale(1);}50%{transform:scale(1.13);}}
-  .listen-panel .l-name{font-size:21px;font-weight:800;color:#1e3a5f;margin:7px 0;}
-  .listen-panel .l-num{font-size:50px;font-weight:900;color:#27ae60;margin:4px 0;}
-  .listen-panel .l-trans{background:#fff;border-radius:10px;padding:9px;font-size:13px;color:#666;min-height:40px;display:flex;align-items:center;justify-content:center;margin:10px 0;box-shadow:inset 0 2px 5px rgba(0,0,0,.06);}
-  .listen-btns{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
-  .listen-btns .btn{padding:9px 16px;font-size:13px;}
-
-  /* orders grid */
-  .orders-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;max-height:430px;overflow-y:auto;padding:2px;}
-  .orders-grid::-webkit-scrollbar{width:5px;}
-  .orders-grid::-webkit-scrollbar-track{background:#eef5fb;border-radius:5px;}
-  .orders-grid::-webkit-scrollbar-thumb{background:#2d6a9f;border-radius:5px;}
-  .o-card{background:#fff;border:2px solid #e0eaf2;border-radius:15px;padding:13px 11px;position:relative;transition:border .2s,box-shadow .2s;}
-  .o-card:hover{border-color:#2d6a9f;box-shadow:0 3px 12px rgba(45,106,159,.12);}
-  .o-card.active{border-color:#27ae60;background:linear-gradient(135deg,#eafaf2,#fff);box-shadow:0 4px 14px rgba(39,174,96,.25);}
-  .o-card .rm{position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;border:none;background:#fde8e8;color:#e74c3c;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  .o-card .rm:hover{background:#f5c0c0;}
-  .o-card .o-name{font-size:12.5px;font-weight:700;color:#1e3a5f;padding-right:24px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .o-card .o-num{font-size:32px;font-weight:900;background:linear-gradient(135deg,#1e3a5f,#2d6a9f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-  .o-card .o-inp{width:100%;padding:7px;border:2px solid #dce8f0;border-radius:9px;font-family:inherit;font-size:19px;font-weight:700;text-align:center;}
-  .o-card .o-inp:focus{outline:none;border-color:#2d6a9f;}
-
-  /* totals */
-  .totals{background:linear-gradient(135deg,#1e3a5f,#2d6a9f);border-radius:18px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,.2);}
-  .t-box{text-align:center;}
-  .t-box .t-lbl{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
-  .t-box .t-val{font-size:34px;font-weight:900;color:#fff;}
-
-  /* toast */
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e3a5f;color:#fff;padding:13px 26px;border-radius:13px;font-size:13.5px;font-weight:600;box-shadow:0 5px 20px rgba(0,0,0,.25);transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-
-  @media(max-width:380px){
-    .wrap{padding:12px 10px 44px;}
-    .header h1{font-size:21px;}
-    .o-card .o-num{font-size:27px;}
-    .t-box .t-val{font-size:29px;}
-  }
-</style>
-</head>
-<body>
-
-<!-- floating drops -->
-<div class="drops">
-  <div class="drop"></div><div class="drop"></div><div class="drop"></div><div class="drop"></div>
-  <div class="drop"></div><div class="drop"></div><div class="drop"></div><div class="drop"></div>
-</div>
-<!-- floating badges -->
-<div class="fbadge" style="top:7%;left:3%;font-size:46px;">🐄</div>
-<div class="fbadge" style="top:52%;right:3%;font-size:34px;animation-delay:2s;">🥛</div>
-<div class="fbadge" style="bottom:14%;left:5%;font-size:28px;animation-delay:4s;">🧈</div>
-
-<div class="wrap" id="root"></div>
-
-<div class="toast" id="toast"></div>
-
-<!-- React + Babel -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-<script type="text/babel">
-(function(){
-  var useState = React.useState;
-  var useEffect = React.useEffect;
-  var useRef = React.useRef;
-
-  var INIT_CLIENTS = [
-    'MIDC','Parbhakar','Abrar','Durg','Brahmapuri','Mr. K','Shri Ram',
-    'Wayne','A1','Nikhil','Mohan','Ratna','Sawner','Khalsa','Khaparkheda',
-    'Mishraji','Rasta','Chillar','Mamu','Devlapar','Suraj',
-    'Katol gold','Anand Soda','Khamla','Kamthi','LG','Wardha','Manewada',
-    'Ballarsha','Anuj dairy','Daryapur','Moseen pulgaon','Rc','Radhe wardha',
-    'Patel saab','Nova','Yavatmal','Gadchiroli','Bunty Gupta','Swagat Lawn'
-  ];
-
-  var WORDS = {
-    'three hundred':300,'two hundred ninety five':295,'two hundred ninety':290,
-    'two hundred eighty five':285,'two hundred eighty':280,'two hundred seventy five':275,
-    'two hundred seventy':270,'two hundred sixty five':265,'two hundred sixty':260,
-    'two hundred fifty five':255,'two hundred fifty':250,'two hundred forty five':245,
-    'two hundred forty':240,'two hundred thirty five':235,'two hundred thirty':230,
-    'two hundred twenty five':225,'two hundred twenty':220,'two hundred fifteen':215,
-    'two hundred ten':210,'two hundred five':205,'two hundred':200,
-    'one hundred ninety five':195,'one hundred ninety':190,'one hundred eighty five':185,
-    'one hundred eighty':180,'one hundred seventy five':175,'one hundred seventy':170,
-    'one hundred sixty five':165,'one hundred sixty':160,'one hundred fifty five':155,
-    'one hundred fifty':150,'one hundred forty five':145,'one hundred forty':140,
-    'one hundred thirty five':135,'one hundred thirty':130,'one hundred twenty five':125,
-    'one hundred twenty':120,'one hundred fifteen':115,'one hundred ten':110,
-    'one hundred five':105,'one hundred':100,'hundred':100,
-    'ninety nine':99,'ninety eight':98,'ninety seven':97,'ninety six':96,'ninety five':95,
-    'ninety four':94,'ninety three':93,'ninety two':92,'ninety one':91,'ninety':90,
-    'eighty nine':89,'eighty eight':88,'eighty seven':87,'eighty six':86,'eighty five':85,
-    'eighty four':84,'eighty three':83,'eighty two':82,'eighty one':81,'eighty':80,
-    'seventy nine':79,'seventy eight':78,'seventy seven':77,'seventy six':76,'seventy five':75,
-    'seventy four':74,'seventy three':73,'seventy two':72,'seventy one':71,'seventy':70,
-    'sixty nine':69,'sixty eight':68,'sixty seven':67,'sixty six':66,'sixty five':65,
-    'sixty four':64,'sixty three':63,'sixty two':62,'sixty one':61,'sixty':60,
-    'fifty nine':59,'fifty eight':58,'fifty seven':57,'fifty six':56,'fifty five':55,
-    'fifty four':54,'fifty three':53,'fifty two':52,'fifty one':51,'fifty':50,
-    'forty nine':49,'forty eight':48,'forty seven':47,'forty six':46,'forty five':45,
-    'forty four':44,'forty three':43,'forty two':42,'forty one':41,'forty':40,
-    'thirty nine':39,'thirty eight':38,'thirty seven':37,'thirty six':36,'thirty five':35,
-    'thirty four':34,'thirty three':33,'thirty two':32,'thirty one':31,'thirty':30,
-    'twenty nine':29,'twenty eight':28,'twenty seven':27,'twenty six':26,'twenty five':25,
-    'twenty four':24,'twenty three':23,'twenty two':22,'twenty one':21,'twenty':20,
-    'nineteen':19,'eighteen':18,'seventeen':17,'sixteen':16,'fifteen':15,
-    'fourteen':14,'thirteen':13,'twelve':12,'eleven':11,'ten':10,
-    'nine':9,'eight':8,'seven':7,'six':6,'five':5,'four':4,'three':3,'two':2,'one':1,'zero':0,
-    // hindi
-    'do sau':200,'teen sau':300,'ek sau':100,
-    'sau pachchis':125,'sau pachis':125,'sau bees':120,'sau bis':120,
-    'sau tees':130,'sau tis':130,'sau paintis':135,'sau chalis':140,
-    'sau paintalis':145,'sau pachas':150,'sau pachpan':155,'sau saath':160,
-    'sau paisath':165,'sau sattar':170,'sau pachattar':175,'sau assi':180,
-    'sau pachasi':185,'sau nabbe':190,'sau pachanve':195,
-    'sau ek':101,'sau do':102,'sau teen':103,'sau char':104,'sau paanch':105,
-    'sau das':110,'sau gyarah':111,'sau barah':112,'sau pandrah':115,
-    'sau cheh':106,'sau saat':107,'sau aath':108,'sau nau':109,
-    'sau':100,'so':100,
-    'nabbe':90,'navve':90,'assi':80,'ashi':80,'sattar':70,'satar':70,
-    'saath':60,'sath':60,'pachas':50,'chalis':40,'chaalees':40,'tees':30,'tis':30,
-    'bees':20,'bis':20,'unnis':19,'atharah':18,'satrah':17,'solah':16,
-    'pandrah':15,'chaudah':14,'terah':13,'barah':12,'gyarah':11,'das':10,
-    'nau':9,'aath':8,'saat':7,'cheh':6,'paanch':5,'panch':5,'char':4,'teen':3,'do':2,'ek':1,'shunya':0
-  };
-
-  // sorted keys longest first (done once)
-  var SORTED_KEYS = Object.keys(WORDS).sort(function(a,b){ return b.length - a.length; });
-
-  function parseNum(txt){
-    var m = txt.match(/\d+/);
-    if(m) return parseInt(m[0]);
-    var lo = txt.toLowerCase();
-    for(var i=0; i<SORTED_KEYS.length; i++){
-      if(lo.indexOf(SORTED_KEYS[i]) !== -1) return WORDS[SORTED_KEYS[i]];
-    }
-    return 0;
-  }
-
-  function showToast(msg){
-    var el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
-    setTimeout(function(){ el.classList.remove('show'); }, 2200);
-  }
-
-  function App(){
-    var clientsState = useState(INIT_CLIENTS);
-    var clients = clientsState[0], setClients = clientsState[1];
-
-    var ordersState = useState(function(){
-      var o = {};
-      INIT_CLIENTS.forEach(function(c){ o[c]=0; });
-      return o;
-    });
-    var orders = ordersState[0], setOrders = ordersState[1];
-
-    var idxState = useState(0);
-    var idx = idxState[0], setIdx = idxState[1];
-
-    var listenState = useState(false);
-    var listening = listenState[0], setListening = listenState[1];
-
-    var editState = useState(false);
-    var editMode = editState[0], setEditMode = editState[1];
-
-    var langState = useState('en-IN');
-    var lang = langState[0], setLang = langState[1];
-
-    var nameState = useState('');
-    var newName = nameState[0], setNewName = nameState[1];
-
-    var addState = useState(false);
-    var showAdd = addState[0], setShowAdd = addState[1];
-
-    var transState = useState('');
-    var transcript = transState[0], setTranscript = transState[1];
-
-    var dateState = useState(new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}));
-    var date = dateState[0], setDate = dateState[1];
-
-    var recogRef = useRef(null);
-    var idxRef = useRef(0);
-    var listenRef = useRef(false);
-    var clientsRef = useRef(clients);
-
-    useEffect(function(){ idxRef.current = idx; }, [idx]);
-    useEffect(function(){ listenRef.current = listening; }, [listening]);
-    useEffect(function(){ clientsRef.current = clients; }, [clients]);
-
-    // init speech recognition
-    useEffect(function(){
-      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if(!SR) return;
-      var r = new SR();
-      r.continuous = false;
-      r.interimResults = false;
-      r.lang = lang;
-      r.onresult = function(e){
-        var txt = e.results[0][0].transcript;
-        setTranscript(txt);
-        var num = parseNum(txt);
-        var c = clientsRef.current[idxRef.current];
-        setOrders(function(prev){
-          var nw = {};
-          Object.keys(prev).forEach(function(k){ nw[k]=prev[k]; });
-          nw[c] = num;
-          return nw;
-        });
-      };
-      r.onerror = function(e){
-        if(e.error==='no-speech') setTranscript('⚠️ No speech detected');
-        else if(e.error==='audio-capture') setTranscript('⚠️ Mic not found');
-        else if(e.error!=='aborted') setTranscript('⚠️ Error: '+e.error);
-      };
-      r.onend = function(){};
-      recogRef.current = r;
-    }, [lang]);
-
-    function startListen(){
-      setTranscript('🎤 Listening...');
-      try{ if(recogRef.current) recogRef.current.start(); } catch(e){}
-    }
-
-    function startVoice(){
-      if(!recogRef.current){ alert('Please use Chrome for voice recognition.'); return; }
-      setListening(true);
-      setIdx(0);
-      setTranscript('');
-      setTimeout(startListen, 250);
-    }
-
-    function stopVoice(){
-      setListening(false);
-      try{ if(recogRef.current) recogRef.current.stop(); } catch(e){}
-    }
-
-    function goNext(){
-      var cur = idxRef.current;
-      if(cur < clientsRef.current.length - 1){
-        setIdx(cur+1);
-        setTranscript('');
-        setTimeout(startListen, 300);
-      } else {
-        setListening(false);
-        showToast('✅ All orders completed!');
-      }
-    }
-
-    function addClient(){
-      var n = newName.trim();
-      if(n && clients.indexOf(n)===-1){
-        setClients(function(p){ return p.concat([n]); });
-        setOrders(function(p){
-          var nw = {};
-          Object.keys(p).forEach(function(k){ nw[k]=p[k]; });
-          nw[n] = 0;
-          return nw;
-        });
-        setNewName('');
-        setShowAdd(false);
-      }
-    }
-
-    function removeClient(n){
-      if(confirm('Remove '+n+'?')){
-        setClients(function(p){ return p.filter(function(c){ return c!==n; }); });
-        setOrders(function(p){
-          var nw = {};
-          Object.keys(p).forEach(function(k){ if(k!==n) nw[k]=p[k]; });
-          return nw;
-        });
-      }
-    }
-
-    function resetAll(){
-      var o = {};
-      clients.forEach(function(c){ o[c]=0; });
-      setOrders(o);
-      setIdx(0);
-      setTranscript('');
-    }
-
-    // totals
-    var totalPcs = 0;
-    Object.keys(orders).forEach(function(k){ totalPcs += orders[k]; });
-    var totalCr = (totalPcs/6).toFixed(2);
-
-    // WhatsApp copy — perfectly aligned
-    function copyWA(){
-      var tom = new Date();
-      tom.setDate(tom.getDate()+1);
-      var d = tom.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-      var maxLen = 12; // minimum width
-      clients.forEach(function(c){ if(c.length > maxLen) maxLen = c.length; });
-      if('Total Pieces'.length > maxLen) maxLen = 'Total Pieces'.length;
-      function pad(s){ var r=s; while(r.length < maxLen) r += ' '; return r; }
-      var line = '';
-      for(var i=0;i<maxLen+10;i++) line += '─';
-      var t = '🥛 NMD Orders\n';
-      t += '📅 Date : ' + d + '\n';
-      t += line + '\n';
-      t += ' ' + pad('Client') + ' | Qty\n';
-      t += line + '\n';
-      clients.forEach(function(c){
-        t += ' ' + pad(c) + ' | ' + orders[c] + '\n';
-      });
-      t += line + '\n';
-      t += ' ' + pad('Total Pieces') + ' | ' + totalPcs + '\n';
-      t += ' ' + pad('Total Crates') + ' | ' + totalCr + '\n';
-      t += line;
-
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(t).then(function(){ showToast('📋 Copied!'); });
-      } else {
-        // fallback for older browsers
-        var ta = document.createElement('textarea');
-        ta.value = t;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('📋 Copied!');
-      }
-    }
-
-    // ── RENDER ──
-    return React.createElement('div', null,
-      // header
-      React.createElement('div', {className:'header'},
-        React.createElement('span', {className:'h-icon'}, '🥛'),
-        React.createElement('h1', null, 'NMD Orders'),
-        React.createElement('p', null, 'Dairy Voice Order System')
-      ),
-
-      // language
-      React.createElement('div', {className:'card'},
-        React.createElement('div', {className:'card-label'},
-          React.createElement('span', {className:'lbl-ico'}, '🌐'), ' Voice Language'
-        ),
-        React.createElement('select', {
-          className:'sel', value:lang, disabled:listening,
-          onChange:function(e){ setLang(e.target.value); }
-        },
-          React.createElement('option', {value:'en-IN'}, '🇮🇳 English (India)'),
-          React.createElement('option', {value:'hi-IN'}, '🇮🇳 हिंदी (Hindi)')
-        ),
-        React.createElement('div', {className:'hint'},
-          React.createElement('b', null, '💡 Examples:'), ' English: "twenty", "fifty", "hundred twenty five"   Hindi: "bees", "pachas", "sau pachchis"'
-        )
-      ),
-
-      // date
-      React.createElement('div', {className:'card'},
-        React.createElement('div', {className:'card-label'},
-          React.createElement('span', {className:'lbl-ico'}, '📅'), ' Date'
-        ),
-        React.createElement('input', {className:'inp', type:'text', value:date, onChange:function(e){ setDate(e.target.value); }})
-      ),
-
-      // buttons
-      React.createElement('div', {className:'card'},
-        React.createElement('div', {className:'btn-grid'},
-          !listening
-            ? React.createElement('button', {className:'btn btn-start', onClick:startVoice}, React.createElement('span',{className:'ico'},'▶️'), ' Start')
-            : React.createElement('button', {className:'btn btn-stop',  onClick:stopVoice},  React.createElement('span',{className:'ico'},'                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
-                    }
-                  }
-                }
-                
-                const idx = currentIndexRef.current;
-                const client = clients[idx];
-                
-                setOrders(prev => {
-                  const newOrders = { ...prev, [client]: number };
-                  return newOrders;
-                });
-              };
-
-              recog.onerror = (event) => {
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                  setShowRetry(true);
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                  setShowRetry(true);
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                  setShowRetry(true);
-                }
-              };
-
-              recog.onend = () => {
-                if (isListeningRef.current && !showRetry) {
-                  setShowRetry(true);
-                }
-              };
-
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              setShowRetry(false);
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser. Please use Chrome.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            setShowRetry(false);
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              setShowRetry(true);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            setShowRetry(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {}
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-            setShowRetry(false);
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName} from the list?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 pb-8">
-              <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-8 border border-purple-200">
-                <div className="text-center mb-6 md:mb-8">
-                  <div className="inline-block p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl mb-3 shadow-lg">
-                    <span className="text-3xl md:text-4xl">📦</span>
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-                    NMD Orders
-                  </h1>
-                  <p className="text-gray-500 text-xs md:text-sm">Voice-Powered Order Management</p>
-                </div>
-
-                <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
-                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                    <span>🌐</span> Voice Language
-                  </label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full p-3 border-2 border-amber-200 rounded-xl bg-white shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200 transition-all text-sm md:text-base"
-                    disabled={isListening}
-                  >
-                    <option value="en-IN">🇮🇳 English (India)</option>
-                    <option value="hi-IN">🇮🇳 हिंदी (Hindi)</option>
-                  </select>
-                  <div className="mt-3 p-3 bg-white rounded-xl text-xs text-gray-600">
-                    <div className="font-semibold mb-1">💡 Examples:</div>
-                    <div>English: "twenty", "fifty", "hundred twenty five"</div>
-                    <div>Hinglish: "bees", "pachas", "sau pachchis"</div>
-                  </div>
-                </div>
-
-                <div className="mb-4 md:mb-6 flex gap-2 md:gap-3 justify-center flex-wrap">
-                  {!isListening ? (
-                    <button
-                      onClick={startVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                    >
-                      <span className="text-lg md:text-xl">▶️</span> Start Voice Entry
-                    </button>
-                  ) : (
-                    <button
-                      onClick={stopVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                    >
-                      <span className="text-lg md:text-xl">⏹️</span> Stop
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => setEditMode(!editMode)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">✏️</span> {editMode ? 'Done' : 'Edit'}
-                  </button>
-                  
-                  <button
-                    onClick={copyToClipboard}
-                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">📋</span> Copy
-                  </button>
-                  
-                  <button
-                    onClick={resetOrders}
-                    className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">🔄</span> Reset
-                  </button>
-
-                  <button
-                    onClick={() => setShowAddClient(!showAddClient)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">{showAddClient ? '✕' : '➕'}</span> {showAddClient ? 'Cancel' : 'Add'}
-                  </button>
-                </div>
-
-                {showAddClient && (
-                  <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
-                    <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                      <span>👤</span> New Client Name
-                    </label>
-                    <div className="flex gap-2 md:gap-3">
-                      <input
-                        type="text"
-                        value={newClientName}
-                        onChange={(e) => setNewClientName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                        placeholder="Enter client name"
-                        className="flex-1 p-3 border-2 border-orange-200 rounded-xl shadow-sm focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all text-sm md:text-base"
-                      />
-                      <button
-                        onClick={addNewClient}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {isListening && (
-                  <div className="mb-4 md:mb-6 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-400 rounded-2xl shadow-xl">
-                    <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-                      <span className="text-2xl md:text-3xl animate-pulse">🎤</span>
-                      <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-                        {clients[currentIndex]}
-                      </span>
-                    </div>
-                    <div className="text-center mb-3 md:mb-4">
-                      <div className="inline-block px-4 md:px-6 py-2 md:py-3 bg-white rounded-2xl shadow-md">
-                        <div className="text-xs md:text-sm text-gray-500 mb-1">Current Order</div>
-                        <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                          {orders[clients[currentIndex]]}
-                        </div>
-                      </div>
-                    </div>
-                    {transcript && (
-                      <div className="text-xs md:text-sm bg-white/80 backdrop-blur p-2 md:p-3 rounded-xl mb-3 md:mb-4 text-center shadow-sm border border-gray-200">
-                        {transcript}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2 justify-center flex-wrap">
-                      <button
-                        onClick={retryCurrentClient}
-                        className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        🔄 Retry
-                      </button>
-                      <button
-                        onClick={confirmAndNext}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        ✓ Next
-                      </button>
-                      <button
-                        onClick={skipToNext}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        ⏭️ Skip
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="mb-4 md:mb-6">
-                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                    <span>📅</span> Date
-                  </label>
-                  <input
-                    type="text"
-                    value={currentDate}
-                    onChange={(e) => setCurrentDate(e.target.value)}
-                    className="w-full p-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all bg-white text-sm md:text-base"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 max-h-96 overflow-y-auto p-1 md:p-2">
-                  {clients.map((client, idx) => (
-                    <div
-                      key={client}
-                      className={`p-3 md:p-4 rounded-2xl border-2 transition-all relative shadow-md hover:shadow-lg ${
-                        idx === currentIndex && isListening
-                          ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 scale-105'
-                          : 'border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:border-purple-300'
-                      }`}
-                    >
-                      <button
-                        onClick={() => removeClient(client)}
-                        className="absolute top-1 right-1 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:scale-110 transition-all"
-                        title="Remove client"
-                      >
-                        ✕
-                      </button>
-                      <div className="font-bold text-gray-700 mb-1 md:mb-2 pr-6 md:pr-8 text-xs md:text-base">{client}</div>
-                      {editMode ? (
-                        <input
-                          type="number"
-                          value={orders[client]}
-                          onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
-                          className="w-full p-2 border-2 border-purple-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all text-sm md:text-base"
-                        />
-                      ) : (
-                        <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                          {orders[client]}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4 md:p-6 rounded-2xl shadow-xl border border-purple-200">
-                  <div className="flex items-center justify-between mb-2 md:mb-3">
-                    <div className="text-base md:text-lg font-bold text-gray-700">📊 Summary</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
-                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Pieces</div>
-                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        {totalPieces}
-                      </div>
-                    </div>
-                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
-                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Crates</div>
-                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                        {totalCrates}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        };
-
-        ReactDOM.render(<App/>, document.getElementById('root'));
-</script>
-</body>
-</html><VoiceOrderEntry />, document.getElementById('root'));
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NMD Orders - Voice Order Entry System</title>
     <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin
+        src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
         }
+
         body {
             margin: 0;
             padding: 0;
             overflow-x: hidden;
         }
+
         #root {
             min-height: 100vh;
         }
     </style>
 </head>
+
 <body>
     <div id="root"></div>
 
@@ -860,465 +34,462 @@
         const { useState, useEffect, useRef } = React;
 
         const VoiceOrderEntry = () => {
-          const [clients, setClients] = useState([
-            'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
-            'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
-            'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
-            'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
-            'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
-            'Patel saab', 'Nova'
-          ]);
-          const [newClientName, setNewClientName] = useState('');
-          const [showAddClient, setShowAddClient] = useState(false);
-          const [language, setLanguage] = useState('en-IN');
+            const [clients, setClients] = useState([
+                'MIDC', 'Parbhakar', 'Abrar', 'Durg', 'Brahmapuri', 'Mr. K', 'Shri Ram',
+                'Wayne', 'A1', 'Nikhil', 'Mohan', 'Ratna', 'Sawner', 'Khalsa', 'Khaparkheda',
+                'Mishraji', 'Rasta', 'Chillar', 'Mamu', 'Devlapar', 'Suraj',
+                'Katol gold', 'Anand Soda', 'Khamla', 'Kamthi', 'LG', 'Wardha', 'Manewada',
+                'Ballarsha', 'Anuj dairy', 'Daryapur', 'Moseen pulgaon', 'Rc', 'Radhe wardha',
+                'Patel saab', 'Nova'
+            ]);
+            const [newClientName, setNewClientName] = useState('');
+            const [showAddClient, setShowAddClient] = useState(false);
+            const [language, setLanguage] = useState('en-IN');
 
-          const [orders, setOrders] = useState(() => {
-            const saved = {};
-            clients.forEach(client => saved[client] = 0);
-            return saved;
-          });
-          const [currentIndex, setCurrentIndex] = useState(0);
-          const [isListening, setIsListening] = useState(false);
-          const [editMode, setEditMode] = useState(false);
-          const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric'
-          }));
-          const [transcript, setTranscript] = useState('');
-          const [showRetry, setShowRetry] = useState(false);
-          const recognitionRef = useRef(null);
-          const isListeningRef = useRef(false);
-          const currentIndexRef = useRef(0);
+            const [orders, setOrders] = useState(() => {
+                const saved = {};
+                clients.forEach(client => saved[client] = 0);
+                return saved;
+            });
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [isListening, setIsListening] = useState(false);
+            const [editMode, setEditMode] = useState(false);
+            const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }));
+            const [transcript, setTranscript] = useState('');
+            const [showRetry, setShowRetry] = useState(false);
+            const recognitionRef = useRef(null);
+            const isListeningRef = useRef(false);
+            const currentIndexRef = useRef(0);
 
-          useEffect(() => {
-            currentIndexRef.current = currentIndex;
-          }, [currentIndex]);
+            useEffect(() => {
+                currentIndexRef.current = currentIndex;
+            }, [currentIndex]);
 
-          useEffect(() => {
-            isListeningRef.current = isListening;
-          }, [isListening]);
+            useEffect(() => {
+                isListeningRef.current = isListening;
+            }, [isListening]);
 
-          useEffect(() => {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-              const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-              const recog = new SpeechRecognition();
-              recog.continuous = false;
-              recog.interimResults = false;
-              recog.lang = language;
+            useEffect(() => {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recog = new SpeechRecognition();
+                    recog.continuous = false;
+                    recog.interimResults = false;
+                    recog.lang = language;
 
-              recog.onresult = (event) => {
-                const spokenText = event.results[0][0].transcript;
-                setTranscript(spokenText);
-                setShowRetry(false);
-                
-                const matches = spokenText.match(/\d+/);
-                let number = 0;
-                
-                if (matches) {
-                  number = parseInt(matches[0]);
+                    recog.onresult = (event) => {
+                        const spokenText = event.results[0][0].transcript;
+                        setTranscript(spokenText);
+                        setShowRetry(false);
+
+                        const matches = spokenText.match(/\d+/);
+                        let number = 0;
+
+                        if (matches) {
+                            number = parseInt(matches[0]);
+                        } else {
+                            const wordToNum = {
+                                'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+                                'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+                                'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
+                                'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
+                                'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+                                'hundred': 100, 'one hundred': 100, 'two hundred': 200, 'three hundred': 300,
+                                'shunya': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
+                                'cheh': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
+                                'bees': 20, 'bis': 20, 'tees': 30, 'chalis': 40, 'pachas': 50,
+                                'saath': 60, 'sattar': 70, 'assi': 80, 'nabbe': 90, 'sau': 100, 'so': 100,
+                                'do sau': 200, 'teen sau': 300
+                            };
+
+                            const lowerText = spokenText.toLowerCase();
+                            for (const [word, num] of Object.entries(wordToNum)) {
+                                if (lowerText.includes(word)) {
+                                    number = num;
+                                    break;
+                                }
+                            }
+                        }
+
+                        const idx = currentIndexRef.current;
+                        const client = clients[idx];
+
+                        setOrders(prev => {
+                            const newOrders = { ...prev, [client]: number };
+                            return newOrders;
+                        });
+                    };
+
+                    recog.onerror = (event) => {
+                        if (event.error === 'no-speech') {
+                            setTranscript('⚠️ No speech detected');
+                            setShowRetry(true);
+                        } else if (event.error === 'audio-capture') {
+                            setTranscript('⚠️ Microphone not detected');
+                            setShowRetry(true);
+                        } else if (event.error !== 'aborted') {
+                            setTranscript(`⚠️ Error: ${event.error}`);
+                            setShowRetry(true);
+                        }
+                    };
+
+                    recog.onend = () => {
+                        if (isListeningRef.current && !showRetry) {
+                            setShowRetry(true);
+                        }
+                    };
+
+                    recognitionRef.current = recog;
+                }
+            }, [clients, language]);
+
+            const startVoiceEntry = () => {
+                if (recognitionRef.current) {
+                    setIsListening(true);
+                    setCurrentIndex(0);
+                    setTranscript('');
+                    setShowRetry(false);
+                    startListeningForCurrent();
                 } else {
-                  const wordToNum = {
-                    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
-                    'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
-                    'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14, 'fifteen': 15,
-                    'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19, 'twenty': 20,
-                    'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
-                    'hundred': 100, 'one hundred': 100, 'two hundred': 200, 'three hundred': 300,
-                    'shunya': 0, 'ek': 1, 'do': 2, 'teen': 3, 'char': 4, 'paanch': 5, 'panch': 5,
-                    'cheh': 6, 'saat': 7, 'aath': 8, 'nau': 9, 'das': 10,
-                    'bees': 20, 'bis': 20, 'tees': 30, 'chalis': 40, 'pachas': 50,
-                    'saath': 60, 'sattar': 70, 'assi': 80, 'nabbe': 90, 'sau': 100, 'so': 100,
-                    'do sau': 200, 'teen sau': 300
-                  };
-                  
-                  const lowerText = spokenText.toLowerCase();
-                  for (const [word, num] of Object.entries(wordToNum)) {
-                    if (lowerText.includes(word)) {
-                      number = num;
-                      break;
+                    alert('Speech recognition is not supported in your browser. Please use Chrome.');
+                }
+            };
+
+            const startListeningForCurrent = () => {
+                setTranscript('🎤 Listening...');
+                setShowRetry(false);
+                try {
+                    if (recognitionRef.current) {
+                        recognitionRef.current.start();
                     }
-                  }
+                } catch (e) {
+                    setShowRetry(true);
                 }
-                
+            };
+
+            const retryCurrentClient = () => {
+                startListeningForCurrent();
+            };
+
+            const skipToNext = () => {
                 const idx = currentIndexRef.current;
-                const client = clients[idx];
-                
-                setOrders(prev => {
-                  const newOrders = { ...prev, [client]: number };
-                  return newOrders;
+                if (idx < clients.length - 1) {
+                    setCurrentIndex(idx + 1);
+                    setTranscript('');
+                    setShowRetry(false);
+                    setTimeout(() => startListeningForCurrent(), 300);
+                } else {
+                    setIsListening(false);
+                    alert('All orders completed!');
+                }
+            };
+
+            const confirmAndNext = () => {
+                const idx = currentIndexRef.current;
+                if (idx < clients.length - 1) {
+                    setCurrentIndex(idx + 1);
+                    setTranscript('');
+                    setShowRetry(false);
+                    setTimeout(() => startListeningForCurrent(), 300);
+                } else {
+                    setIsListening(false);
+                    alert('All orders completed!');
+                }
+            };
+
+            const stopVoiceEntry = () => {
+                setIsListening(false);
+                setShowRetry(false);
+                if (recognitionRef.current) {
+                    try {
+                        recognitionRef.current.stop();
+                    } catch (e) { }
+                }
+            };
+
+            const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
+            const totalCrates = (totalPieces / 6).toFixed(2);
+
+            const formatForWhatsApp = () => {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
                 });
-              };
 
-              recog.onerror = (event) => {
-                if (event.error === 'no-speech') {
-                  setTranscript('⚠️ No speech detected');
-                  setShowRetry(true);
-                } else if (event.error === 'audio-capture') {
-                  setTranscript('⚠️ Microphone not detected');
-                  setShowRetry(true);
-                } else if (event.error !== 'aborted') {
-                  setTranscript(`⚠️ Error: ${event.error}`);
-                  setShowRetry(true);
+                let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
+
+                clients.forEach(client => {
+                    const order = orders[client];
+                    const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
+                    text += `\t${client}.${spacing}=\t${order}\t\n`;
+                });
+
+                text += `\tTotal pieces       =\t${totalPieces}\t\n`;
+                text += `\tTotal Crates  =\t${totalCrates}`;
+
+                return text;
+            };
+
+            const copyToClipboard = () => {
+                navigator.clipboard.writeText(formatForWhatsApp());
+                alert('Order copied to clipboard! You can paste it in WhatsApp now.');
+            };
+
+            const resetOrders = () => {
+                const reset = {};
+                clients.forEach(client => reset[client] = 0);
+                setOrders(reset);
+                setCurrentIndex(0);
+                setTranscript('');
+                setShowRetry(false);
+            };
+
+            const addNewClient = () => {
+                if (newClientName.trim() && !clients.includes(newClientName.trim())) {
+                    setClients(prev => [...prev, newClientName.trim()]);
+                    setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
+                    setNewClientName('');
+                    setShowAddClient(false);
                 }
-              };
+            };
 
-              recog.onend = () => {
-                if (isListeningRef.current && !showRetry) {
-                  setShowRetry(true);
+            const removeClient = (clientName) => {
+                if (confirm(`Remove ${clientName} from the list?`)) {
+                    setClients(prev => prev.filter(c => c !== clientName));
+                    setOrders(prev => {
+                        const newOrders = { ...prev };
+                        delete newOrders[clientName];
+                        return newOrders;
+                    });
                 }
-              };
+            };
 
-              recognitionRef.current = recog;
-            }
-          }, [clients, language]);
-
-          const startVoiceEntry = () => {
-            if (recognitionRef.current) {
-              setIsListening(true);
-              setCurrentIndex(0);
-              setTranscript('');
-              setShowRetry(false);
-              startListeningForCurrent();
-            } else {
-              alert('Speech recognition is not supported in your browser. Please use Chrome.');
-            }
-          };
-
-          const startListeningForCurrent = () => {
-            setTranscript('🎤 Listening...');
-            setShowRetry(false);
-            try {
-              if (recognitionRef.current) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              setShowRetry(true);
-            }
-          };
-
-          const retryCurrentClient = () => {
-            startListeningForCurrent();
-          };
-
-          const skipToNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const confirmAndNext = () => {
-            const idx = currentIndexRef.current;
-            if (idx < clients.length - 1) {
-              setCurrentIndex(idx + 1);
-              setTranscript('');
-              setShowRetry(false);
-              setTimeout(() => startListeningForCurrent(), 300);
-            } else {
-              setIsListening(false);
-              alert('All orders completed!');
-            }
-          };
-
-          const stopVoiceEntry = () => {
-            setIsListening(false);
-            setShowRetry(false);
-            if (recognitionRef.current) {
-              try {
-                recognitionRef.current.stop();
-              } catch (e) {}
-            }
-          };
-
-          const totalPieces = Object.values(orders).reduce((sum, val) => sum + val, 0);
-          const totalCrates = (totalPieces / 6).toFixed(2);
-
-          const formatForWhatsApp = () => {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowDate = tomorrow.toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric'
-            });
-            
-            let text = `\tToday's Date: ${tomorrowDate}\t\t\n\t\t\t\n\tClient\tOrder\t\n`;
-            
-            clients.forEach(client => {
-              const order = orders[client];
-              const spacing = '\t'.repeat(Math.max(1, 3 - Math.floor(client.length / 8)));
-              text += `\t${client}.${spacing}=\t${order}\t\n`;
-            });
-            
-            text += `\tTotal pieces       =\t${totalPieces}\t\n`;
-            text += `\tTotal Crates  =\t${totalCrates}`;
-            
-            return text;
-          };
-
-          const copyToClipboard = () => {
-            navigator.clipboard.writeText(formatForWhatsApp());
-            alert('Order copied to clipboard! You can paste it in WhatsApp now.');
-          };
-
-          const resetOrders = () => {
-            const reset = {};
-            clients.forEach(client => reset[client] = 0);
-            setOrders(reset);
-            setCurrentIndex(0);
-            setTranscript('');
-            setShowRetry(false);
-          };
-
-          const addNewClient = () => {
-            if (newClientName.trim() && !clients.includes(newClientName.trim())) {
-              setClients(prev => [...prev, newClientName.trim()]);
-              setOrders(prev => ({ ...prev, [newClientName.trim()]: 0 }));
-              setNewClientName('');
-              setShowAddClient(false);
-            }
-          };
-
-          const removeClient = (clientName) => {
-            if (confirm(`Remove ${clientName} from the list?`)) {
-              setClients(prev => prev.filter(c => c !== clientName));
-              setOrders(prev => {
-                const newOrders = { ...prev };
-                delete newOrders[clientName];
-                return newOrders;
-              });
-            }
-          };
-
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 pb-8">
-              <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-8 border border-purple-200">
-                <div className="text-center mb-6 md:mb-8">
-                  <div className="inline-block p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl mb-3 shadow-lg">
-                    <span className="text-3xl md:text-4xl">📦</span>
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
-                    NMD Orders
-                  </h1>
-                  <p className="text-gray-500 text-xs md:text-sm">Voice-Powered Order Management</p>
-                </div>
-
-                <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
-                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                    <span>🌐</span> Voice Language
-                  </label>
-                  <select
-                    value={language}
-                    onChange={(e) => setLanguage(e.target.value)}
-                    className="w-full p-3 border-2 border-amber-200 rounded-xl bg-white shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200 transition-all text-sm md:text-base"
-                    disabled={isListening}
-                  >
-                    <option value="en-IN">🇮🇳 English (India)</option>
-                    <option value="hi-IN">🇮🇳 हिंदी (Hindi)</option>
-                  </select>
-                  <div className="mt-3 p-3 bg-white rounded-xl text-xs text-gray-600">
-                    <div className="font-semibold mb-1">💡 Examples:</div>
-                    <div>English: "twenty", "fifty", "hundred twenty five"</div>
-                    <div>Hinglish: "bees", "pachas", "sau pachchis"</div>
-                  </div>
-                </div>
-
-                <div className="mb-4 md:mb-6 flex gap-2 md:gap-3 justify-center flex-wrap">
-                  {!isListening ? (
-                    <button
-                      onClick={startVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                    >
-                      <span className="text-lg md:text-xl">▶️</span> Start Voice Entry
-                    </button>
-                  ) : (
-                    <button
-                      onClick={stopVoiceEntry}
-                      className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                    >
-                      <span className="text-lg md:text-xl">⏹️</span> Stop
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => setEditMode(!editMode)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">✏️</span> {editMode ? 'Done' : 'Edit'}
-                  </button>
-                  
-                  <button
-                    onClick={copyToClipboard}
-                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">📋</span> Copy
-                  </button>
-                  
-                  <button
-                    onClick={resetOrders}
-                    className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">🔄</span> Reset
-                  </button>
-
-                  <button
-                    onClick={() => setShowAddClient(!showAddClient)}
-                    className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
-                  >
-                    <span className="text-lg md:text-xl">{showAddClient ? '✕' : '➕'}</span> {showAddClient ? 'Cancel' : 'Add'}
-                  </button>
-                </div>
-
-                {showAddClient && (
-                  <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
-                    <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                      <span>👤</span> New Client Name
-                    </label>
-                    <div className="flex gap-2 md:gap-3">
-                      <input
-                        type="text"
-                        value={newClientName}
-                        onChange={(e) => setNewClientName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
-                        placeholder="Enter client name"
-                        className="flex-1 p-3 border-2 border-orange-200 rounded-xl shadow-sm focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all text-sm md:text-base"
-                      />
-                      <button
-                        onClick={addNewClient}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        Add
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {isListening && (
-                  <div className="mb-4 md:mb-6 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-400 rounded-2xl shadow-xl">
-                    <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-                      <span className="text-2xl md:text-3xl animate-pulse">🎤</span>
-                      <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
-                        {clients[currentIndex]}
-                      </span>
-                    </div>
-                    <div className="text-center mb-3 md:mb-4">
-                      <div className="inline-block px-4 md:px-6 py-2 md:py-3 bg-white rounded-2xl shadow-md">
-                        <div className="text-xs md:text-sm text-gray-500 mb-1">Current Order</div>
-                        <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                          {orders[clients[currentIndex]]}
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 pb-8">
+                    <div className="max-w-4xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-8 border border-purple-200">
+                        <div className="text-center mb-6 md:mb-8">
+                            <div className="inline-block p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl mb-3 shadow-lg">
+                                <span className="text-3xl md:text-4xl">📦</span>
+                            </div>
+                            <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                                NMD Orders
+                            </h1>
+                            <p className="text-gray-500 text-xs md:text-sm">Voice-Powered Order Management</p>
                         </div>
-                      </div>
-                    </div>
-                    {transcript && (
-                      <div className="text-xs md:text-sm bg-white/80 backdrop-blur p-2 md:p-3 rounded-xl mb-3 md:mb-4 text-center shadow-sm border border-gray-200">
-                        {transcript}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2 justify-center flex-wrap">
-                      <button
-                        onClick={retryCurrentClient}
-                        className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        🔄 Retry
-                      </button>
-                      <button
-                        onClick={confirmAndNext}
-                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        ✓ Next
-                      </button>
-                      <button
-                        onClick={skipToNext}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
-                      >
-                        ⏭️ Skip
-                      </button>
-                    </div>
-                  </div>
-                )}
 
-                <div className="mb-4 md:mb-6">
-                  <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
-                    <span>📅</span> Date
-                  </label>
-                  <input
-                    type="text"
-                    value={currentDate}
-                    onChange={(e) => setCurrentDate(e.target.value)}
-                    className="w-full p-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all bg-white text-sm md:text-base"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 max-h-96 overflow-y-auto p-1 md:p-2">
-                  {clients.map((client, idx) => (
-                    <div
-                      key={client}
-                      className={`p-3 md:p-4 rounded-2xl border-2 transition-all relative shadow-md hover:shadow-lg ${
-                        idx === currentIndex && isListening
-                          ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 scale-105'
-                          : 'border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:border-purple-300'
-                      }`}
-                    >
-                      <button
-                        onClick={() => removeClient(client)}
-                        className="absolute top-1 right-1 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:scale-110 transition-all"
-                        title="Remove client"
-                      >
-                        ✕
-                      </button>
-                      <div className="font-bold text-gray-700 mb-1 md:mb-2 pr-6 md:pr-8 text-xs md:text-base">{client}</div>
-                      {editMode ? (
-                        <input
-                          type="number"
-                          value={orders[client]}
-                          onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
-                          className="w-full p-2 border-2 border-purple-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all text-sm md:text-base"
-                        />
-                      ) : (
-                        <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                          {orders[client]}
+                        <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl shadow-sm">
+                            <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
+                                <span>🌐</span> Voice Language
+                            </label>
+                            <select
+                                value={language}
+                                onChange={(e) => setLanguage(e.target.value)}
+                                className="w-full p-3 border-2 border-amber-200 rounded-xl bg-white shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200 transition-all text-sm md:text-base"
+                                disabled={isListening}
+                            >
+                                <option value="en-IN">🇮🇳 English (India)</option>
+                                <option value="hi-IN">🇮🇳 हिंदी (Hindi)</option>
+                            </select>
+                            <div className="mt-3 p-3 bg-white rounded-xl text-xs text-gray-600">
+                                <div className="font-semibold mb-1">💡 Examples:</div>
+                                <div>English: "twenty", "fifty", "hundred twenty five"</div>
+                                <div>Hinglish: "bees", "pachas", "sau pachchis"</div>
+                            </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
 
-                <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4 md:p-6 rounded-2xl shadow-xl border border-purple-200">
-                  <div className="flex items-center justify-between mb-2 md:mb-3">
-                    <div className="text-base md:text-lg font-bold text-gray-700">📊 Summary</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
-                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Pieces</div>
-                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        {totalPieces}
-                      </div>
+                        <div className="mb-4 md:mb-6 flex gap-2 md:gap-3 justify-center flex-wrap">
+                            {!isListening ? (
+                                <button
+                                    onClick={startVoiceEntry}
+                                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                                >
+                                    <span className="text-lg md:text-xl">▶️</span> Start Voice Entry
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={stopVoiceEntry}
+                                    className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                                >
+                                    <span className="text-lg md:text-xl">⏹️</span> Stop
+                                </button>
+                            )}
+
+                            <button
+                                onClick={() => setEditMode(!editMode)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                            >
+                                <span className="text-lg md:text-xl">✏️</span> {editMode ? 'Done' : 'Edit'}
+                            </button>
+
+                            <button
+                                onClick={copyToClipboard}
+                                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                            >
+                                <span className="text-lg md:text-xl">📋</span> Copy
+                            </button>
+
+                            <button
+                                onClick={resetOrders}
+                                className="flex items-center gap-2 bg-gradient-to-r from-gray-500 to-slate-600 hover:from-gray-600 hover:to-slate-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                            >
+                                <span className="text-lg md:text-xl">🔄</span> Reset
+                            </button>
+
+                            <button
+                                onClick={() => setShowAddClient(!showAddClient)}
+                                className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 md:px-6 py-3 md:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 text-sm md:text-base"
+                            >
+                                <span className="text-lg md:text-xl">{showAddClient ? '✕' : '➕'}</span> {showAddClient ? 'Cancel' : 'Add'}
+                            </button>
+                        </div>
+
+                        {showAddClient && (
+                            <div className="mb-4 md:mb-6 p-4 md:p-5 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-2xl shadow-sm">
+                                <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
+                                    <span>👤</span> New Client Name
+                                </label>
+                                <div className="flex gap-2 md:gap-3">
+                                    <input
+                                        type="text"
+                                        value={newClientName}
+                                        onChange={(e) => setNewClientName(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && addNewClient()}
+                                        placeholder="Enter client name"
+                                        className="flex-1 p-3 border-2 border-orange-200 rounded-xl shadow-sm focus:border-orange-400 focus:ring-2 focus:ring-orange-200 transition-all text-sm md:text-base"
+                                    />
+                                    <button
+                                        onClick={addNewClient}
+                                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 md:px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {isListening && (
+                            <div className="mb-4 md:mb-6 p-4 md:p-6 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-400 rounded-2xl shadow-xl">
+                                <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
+                                    <span className="text-2xl md:text-3xl animate-pulse">🎤</span>
+                                    <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+                                        {clients[currentIndex]}
+                                    </span>
+                                </div>
+                                <div className="text-center mb-3 md:mb-4">
+                                    <div className="inline-block px-4 md:px-6 py-2 md:py-3 bg-white rounded-2xl shadow-md">
+                                        <div className="text-xs md:text-sm text-gray-500 mb-1">Current Order</div>
+                                        <div className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                                            {orders[clients[currentIndex]]}
+                                        </div>
+                                    </div>
+                                </div>
+                                {transcript && (
+                                    <div className="text-xs md:text-sm bg-white/80 backdrop-blur p-2 md:p-3 rounded-xl mb-3 md:mb-4 text-center shadow-sm border border-gray-200">
+                                        {transcript}
+                                    </div>
+                                )}
+
+                                <div className="flex gap-2 justify-center flex-wrap">
+                                    <button
+                                        onClick={retryCurrentClient}
+                                        className="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
+                                    >
+                                        🔄 Retry
+                                    </button>
+                                    <button
+                                        onClick={confirmAndNext}
+                                        className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
+                                    >
+                                        ✓ Next
+                                    </button>
+                                    <button
+                                        onClick={skipToNext}
+                                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all text-sm md:text-base"
+                                    >
+                                        ⏭️ Skip
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="mb-4 md:mb-6">
+                            <label className="block text-xs md:text-sm font-bold mb-2 md:mb-3 text-gray-700 flex items-center gap-2">
+                                <span>📅</span> Date
+                            </label>
+                            <input
+                                type="text"
+                                value={currentDate}
+                                onChange={(e) => setCurrentDate(e.target.value)}
+                                className="w-full p-3 border-2 border-gray-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all bg-white text-sm md:text-base"
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6 max-h-96 overflow-y-auto p-1 md:p-2">
+                            {clients.map((client, idx) => (
+                                <div
+                                    key={client}
+                                    className={`p-3 md:p-4 rounded-2xl border-2 transition-all relative shadow-md hover:shadow-lg ${idx === currentIndex && isListening
+                                        ? 'border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 scale-105'
+                                        : 'border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:border-purple-300'
+                                        }`}
+                                >
+                                    <button
+                                        onClick={() => removeClient(client)}
+                                        className="absolute top-1 right-1 md:top-2 md:right-2 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold shadow-md hover:scale-110 transition-all"
+                                        title="Remove client"
+                                    >
+                                        ✕
+                                    </button>
+                                    <div className="font-bold text-gray-700 mb-1 md:mb-2 pr-6 md:pr-8 text-xs md:text-base">{client}</div>
+                                    {editMode ? (
+                                        <input
+                                            type="number"
+                                            value={orders[client]}
+                                            onChange={(e) => setOrders(prev => ({ ...prev, [client]: parseInt(e.target.value) || 0 }))}
+                                            className="w-full p-2 border-2 border-purple-200 rounded-xl shadow-sm focus:border-purple-400 focus:ring-2 focus:ring-purple-200 transition-all text-sm md:text-base"
+                                        />
+                                    ) : (
+                                        <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                                            {orders[client]}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 p-4 md:p-6 rounded-2xl shadow-xl border border-purple-200">
+                            <div className="flex items-center justify-between mb-2 md:mb-3">
+                                <div className="text-base md:text-lg font-bold text-gray-700">📊 Summary</div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 md:gap-4">
+                                <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
+                                    <div className="text-xs md:text-sm text-gray-500 mb-1">Total Pieces</div>
+                                    <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                                        {totalPieces}
+                                    </div>
+                                </div>
+                                <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
+                                    <div className="text-xs md:text-sm text-gray-500 mb-1">Total Crates</div>
+                                    <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                        {totalCrates}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="bg-white p-3 md:p-4 rounded-xl shadow-md">
-                      <div className="text-xs md:text-sm text-gray-500 mb-1">Total Crates</div>
-                      <div className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                        {totalCrates}
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-          );
+            );
         };
 
-        ReactDOM.render(<App/>, document.getElementById('root'));
-</script>
-</body>
-</html><VoiceOrderEntry />, document.getElementById('root'));
+        ReactDOM.render(<VoiceOrderEntry />, document.getElementById('root'));
     </script>
 </body>
+
 </html>
